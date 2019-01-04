@@ -239,7 +239,6 @@ Sl_a <- list()
 mids <- list()
 highs <- list()
 lows <- list()
-vlprobs <- list()
 plba_a <- list()
 Mat <- list()
 
