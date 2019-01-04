@@ -43,6 +43,7 @@ saveRDS(Medlived1, file = "LFQmedmodel.rds")
 
 
 ## Thompson and Bell ################################
+LFQmedmodel <- readRDS("LFQmedmodel.rds")
 
 #' LFQ conversions
 LFQmedmodel1 <- LFQmedmodel
@@ -90,7 +91,7 @@ for (i in 1:iters){
                               hide.progressbar = TRUE)
 }
 
-
+saveRDS(res_cc, file = "Medmodel_res_cc.rds")
 saveRDS(res_TB2, file = "Medmodel_res_TB.rds")
 rm(list = ls())
 
@@ -101,36 +102,62 @@ rm(list = ls())
 
 ## Length-Based Risk Analysis ####
 ## functions
-calc_abund_SB <- function (ages, M, F, R0)
-{
-  N_a <- rep(NA, length(ages))
-  N_a[1] <- R0
+
+calc_abund_SB <- function(ages, Sl_a, M, FM, R0){
+
+  N_a <- R0
+  
+  Fmat <- NA
+  for(i in 1:length(Sl_a)){
+    Fmat[i] <- Sl_a[i] * FM
+  }
+  
+  dt <- diff(ages)
+  
   for (i in 2:length(ages)) {
     if (i < length(ages))
-      N_a[i] <- N_a[i - 1] * exp(-(M + F))
+      N_a[i] <- N_a[i - 1] * exp(-(M + Fmat[i-1])*dt[i - 1])
     if (i == length(ages))
-      N_a[i] <- N_a[i - 1] * exp(-(M + F))/(1 - exp(-(M + F)))
+      N_a[i] <- N_a[i - 1] * exp(-(M + Fmat[i-1])*dt[i - 1])/(1 - exp(-(M + Fmat[i-1])*dt[i - 1]))
   }
   return(N_a)
 }
 
-SPR_SB <- function(ages, Mat_a, W_a, M, F){
-  Na0 <- calc_abund_SB(ages = ages, M = M, F = 0, R0 = R0)
-  Naf <- calc_abund_SB(ages = ages, M = M, F = F, R0 = R0)
+
+SPR_SB <- function(ages, Sl_a, Mat_a, W_a, M, FM){
+  
+  dt <- diff(ages)[1]
+  
+  Na0 <- calc_abund_SB(ages = ages, Sl_a, M = M, FM = 0, R0 = R0)
+  Naf <- calc_abund_SB(ages = ages, Sl_a, M = M, FM = FM, R0 = R0)
+  
   # fished and unfished
-  SB0 <- sum(Na0*Mat_a*W_a)
-  SBf <- sum(Naf*Mat_a*W_a)
+  SB0 <- sum(Na0*Mat_a*W_a)*dt
+  SBf <- sum(Naf*Mat_a*W_a)*dt
+  
   # Compute and return SPR value
   SPR <- SBf/SB0
 }
 
-YPR_SB <- function(F, ages, M, R0, W_a) {
-  Nage <- calc_abund_SB(ages = ages, M = M, F = F, R0 = R0)
-  YPR <- F * sum(Nage * W_a)
+YPR_SB <- function(FM, ages, M, R0, W_a, Sl_a) {
+  
+  dt <- diff(ages)[1]
+  
+  Nage <- calc_abund_SB(ages = ages, Sl_a = Sl_a,  M = M, FM = FM, R0 = R0)
+  YPR <- FM * sum(Nage * W_a * Sl_a) * dt
+  
   return(YPR)
 }
 
-
+SSB_SB <- function(ages, Sl_a, Mat_a, W_a, M, FM){
+  
+  dt <- diff(ages)[1]
+  
+  Nage <- calc_abund_SB(ages = ages, Sl_a = Sl_a, M = M, FM = FM, R0 = R0)
+  SSB <- sum(Nage * Mat_a * W_a) * dt
+  
+  return(SSB)
+}
 
 
 modpath <- "D:/DPLBM/Pub1/Medlived/True"
@@ -144,9 +171,14 @@ iters <- 300
 Medlived_res_bheq <- list()
 LFQmedmodel1 <- LFQmedmodel 
 
+len <- list()
+for(i in 1:iters){ 
+  len[[i]] <- rep(LFQmedmodel1[[i]]$midLengths, rowSums(LFQmedmodel1[[i]]$catch))
+  }
+
 max <- list()
 for (i in 1:iters){
-  max[[i]] <- max(LFQmedmodel_etc$inds[[i]][[1]][,2])
+  max[[i]] <- max(LFQmedmodel1[[i]]$midLengths)
   if (max[[i]] > LFQmedmodel1[[i]]$Linf){
     max[[i]] = LFQmedmodel1[[i]]$Linf
   }
@@ -157,12 +189,15 @@ for(i in 1:iters){
   LFQmedmodel1[[i]]$L50 <- res_cc[[i]]$L50
 }
 
+set.seed(1)
+
+source("~/DPLBM/bheq_mod.R")
 
 for(i in 1:iters){
-  Medlived_res_bheq[[i]] <- bheq(LFQmedmodel_etc$inds[[i]][[1]][,2], type = 2, K = LFQmedmodel1[[i]]$K, Linf = LFQmedmodel1[[i]]$Linf, Lc = LFQmedmodel1[[i]]$L50, La = max[[i]], nboot = 500)
+  Medlived_res_bheq[[i]] <- bheq_LBRA(len[[i]], type = 2, K = LFQmedmodel1[[i]]$K, Linf = LFQmedmodel1[[i]]$Linf, Lc = LFQmedmodel1[[i]]$L50, La = max[[i]], nboot = 200)
 }
 
-saveRDS(Medlived_res_bheq, file = "Medlived_res_bheq.rds")
+saveRDS(Medlived_res_bheq, file = "Medmodel_res_bheq.rds")
 
 
 #' Extract inputs
@@ -171,11 +206,26 @@ for(i in 1:iters){
   list[[i]] <- LFQmedmodel_etc$inds[[i]]
 }
 
+# beta --> find M
+# 1/beta = -log(0.001)/delta_a_lambda
+# delta_a_lambda = theor_a - obs_a
+# del_a <- NA
+# dev <- NA
+# for(i in 1:iters){
+#   del_a[i] <- LFQmedmodel1[[i]]$tmax - max(LFQmedmodel_etc$inds[[i]][[1]][,1])
+#   dev[i] <- max(LFQmedmodel_etc$inds[[i]][[1]][,1]) + (del_a[i] / -log(0.001))
+# }
+  
+
 
 lwa <- 0.018
 lwb <- 2.895
 t0 <- -0.01
 R0 <- 1
+tincr <- 1/12 # monthly
+binwidth <- 2
+CV <- 0.07
+
 
 linf <- list()
 vbk <- list()
@@ -184,31 +234,66 @@ L_a <- list()
 W_a <- list()
 Mat_a <- list()
 M <- list()
-F <- list()
+FM <- list()
+Sl_a <- list()
+mids <- list()
+highs <- list()
+lows <- list()
+vlprobs <- list()
+plba_a <- list()
+Mat <- list()
+
+lbprobs <- function(mnl, sdl) return(pnorm(highs[[i]], mnl, sdl) - pnorm(lows[[i]], mnl, sdl))
+vlprobs <- Vectorize(lbprobs, vectorize.args = c("mnl", "sdl"))
+
 for (i in 1:iters){
   linf[[i]] <- LFQmedmodel1[[i]]$Linf
   vbk[[i]] <- LFQmedmodel1[[i]]$K
-  ages[[i]] <- 0:LFQmedmodel1[[i]]$tmax
+  ages[[i]] <- seq(0, LFQmedmodel1[[i]]$tmax, tincr)
   L_a[[i]] <- linf[[i]]*(1-exp(-vbk[[i]]*(ages[[i]] - t0)))
+  
+  mids[[i]] <- seq((binwidth/2), linf[[i]]*1.5, binwidth)
+  highs[[i]] <- mids[[i]] + (binwidth/2)
+  lows[[i]] <- mids[[i]] - (binwidth/2)
+  plba_a[[i]] <- t(vlprobs(L_a[[i]], L_a[[i]] * CV))
+  plba_a[[i]] <- plba_a[[i]] / rowSums(plba_a[[i]])
+  
   W_a[[i]] <- lwa*L_a[[i]]^lwb
-  Mat_a[[i]] <- as.numeric(sum(list[[i]][[1]][,4] > LFQmedmodel1[[i]]$Lmat))
+  
+  # Jensen definition of natural mortality
+  # M[[i]] <- 1.5*vbk[[i]]
+  # M[[i]] <- -log(exp(-M[[i]] * max(LFQmedmodel_etc$inds[[i]][[1]][,1])))/dev[i]
   M[[i]] <- LFQmedmodel1[[i]]$M
+  
+  # instead of knife-edge --> logistic
+  Mat_a[[i]] <- 1 / (1 + exp(-(mids[[i]] - LFQmedmodel1[[i]]$Lmat) /
+                               ((LFQmedmodel1[[i]]$Lmat * 0.15) / ( log(0.75/(1-0.75)) - log(0.25/(1-0.25)) ))))
+  Mat_a[[i]] <- apply(t(plba_a[[i]])*Mat_a[[i]], 2, sum)
+  Sl_a[[i]] <- 1 / (1 + exp(-(mids[[i]] - LFQmedmodel1[[i]]$L50) /
+                              (res_cc[[i]]$wqs / ( log(0.75/(1-0.75)) - log(0.25/(1-0.25)) ))))
+  Sl_a[[i]] <- apply(t(plba_a[[i]])*Sl_a[[i]], 2, sum)
 }
 
 for(i in 1:iters){
-  F[[i]] <- Medlived_res_bheq[[i]]$z - M[[i]]
-  if(F[[i]] < 0){
-    F[[i]] = 0
+  FM[[i]] <- Medlived_res_bheq[[i]]$z - M[[i]]
+  if(FM[[i]] < 0){
+    FM[[i]] = 0
   }
 }
 
 
 #' run model
-Medlived_res_SB <- list(SPR = rep(NA, 100), YPR = rep(NA, 100))
+Medlived_res_SB <- list(SPR = NA, YPR = NA, Fmsy = NA, Bmsy = NA, FFmsy = NA, BBmsy = NA, FM = NA)
 for (i in 1:iters){
-  Medlived_res_SB$SPR[[i]] <- SPR_SB(ages[[i]], Mat_a[[i]], W_a[[i]], M[[i]], F[[i]])
-  Medlived_res_SB$YPR[[i]] <- YPR_SB(F[[i]], ages[[i]], M[[i]], R0, W_a[[i]])
+  Medlived_res_SB$SPR[i] <- SPR_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], FM[[i]])
+  Medlived_res_SB$YPR[i] <- YPR_SB(FM[[i]], ages[[i]], M[[i]], R0, W_a[[i]], Sl_a[[i]])
+  Medlived_res_SB$Fmsy[i] <- optimize(YPR_SB, ages = ages[[i]], M = M[[i]], R0 = R0, W_a = W_a[[i]], Sl_a = Sl_a[[i]], lower = 0, upper = 10, maximum = TRUE)$maximum
+  Medlived_res_SB$Bmsy[i] <- SSB_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], Medlived_res_SB$Fmsy[i])
+  Medlived_res_SB$FFmsy[i] <- FM[[i]]/Medlived_res_SB$Fmsy[i]
+  Medlived_res_SB$BBmsy[i] <- SSB_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], FM[[i]]) / Medlived_res_SB$Bmsy[i]
+  Medlived_res_SB$FM[i] <- FM[[i]]
 }
+
 
 #' save SB
 saveRDS(Medlived_res_SB, file = "Medmodel_res_LBRA.rds")
@@ -383,16 +468,33 @@ for (i in 1:iters){
 
 #' Run LIME
 Medlived_res_LIME <- list()
+# data_all <- list()
+# 
+# for(i in 1:iters){
+#   data_all[[i]] <- create_inputs(lh = lh[[i]], input_data = data_LF[[i]])
+# }
 
 # a <- c(which(p %in% "The model is likely not converged"))
 for (i in 1:300){
   Medlived_res_LIME[[i]] <- run_LIME(modpath = NULL,
+                                     # input = data_all[[i]],
                                       lh = lh[[i]],
                                       input_data = data_LF[[i]],
                                       est_sigma = "log_sigma_R",
-                                      data_avail = "LC")
+                                      data_avail = "LC"
+                                      # derive_quants = TRUE
+                                     )
 }
 
 # calc_derived_quants(Medlived_res_LIME[[i]]$obj, lh[[i]])
 
+for(i in 1:300){
+  Medlived_res_LIME[[i]]$Derived <- Medlived_res_LIME2[[i]]$Derived
+}
+
 saveRDS(Medlived_res_LIME, file = "Medmodel_res_LIME.rds")
+
+# devtools::install_github("merrillrudd/LIME")
+# devtools::install_github("merrillrudd/LIME@b135ea8d2b9317c3e1a44e90f92a7cd9776938d1")
+
+rm(list = ls())
