@@ -163,7 +163,6 @@ SSB_SB <- function(ages, Sl_a, Mat_a, W_a, M, FM){
 modpath <- "D:/DPLBM/Pub1/Medlived/True"
 setwd(modpath)
 LFQmedmodel <- readRDS("LFQmedmodel.rds")
-LFQmedmodel_etc <- readRDS("Medlist.rds")
 iters <- 300
 
 
@@ -206,15 +205,15 @@ for(i in 1:iters){
   list[[i]] <- LFQmedmodel_etc$inds[[i]]
 }
 
-# beta --> find M
-# 1/beta = -log(0.001)/delta_a_lambda
-# delta_a_lambda = theor_a - obs_a
-# del_a <- NA
-# dev <- NA
-# for(i in 1:iters){
-#   del_a[i] <- LFQmedmodel1[[i]]$tmax - max(LFQmedmodel_etc$inds[[i]][[1]][,1])
-#   dev[i] <- max(LFQmedmodel_etc$inds[[i]][[1]][,1]) + (del_a[i] / -log(0.001))
-# }
+## beta --> find M
+## 1/beta = -log(0.001)/delta_a_lambda
+## delta_a_lambda = theor_a - obs_a
+del_a <- NA
+dev <- NA
+for(i in 1:iters){
+  del_a[i] <-  LFQmedmodel1[[i]]$tmax - ceiling(-log(0.001)/LFQmedmodel1[[i]]$M)
+  dev[i] <- ceiling(-log(0.001)/LFQmedmodel1[[i]]$M) + (del_a[i] / -log(0.001))
+}
   
 
 
@@ -261,8 +260,9 @@ for (i in 1:iters){
   
   # Jensen definition of natural mortality
   # M[[i]] <- 1.5*vbk[[i]]
+  M[[i]] <- -log(0.001)/dev[i]
   # M[[i]] <- -log(exp(-M[[i]] * max(LFQmedmodel_etc$inds[[i]][[1]][,1])))/dev[i]
-  M[[i]] <- LFQmedmodel1[[i]]$M
+  # M[[i]] <- LFQmedmodel1[[i]]$M
   
   # instead of knife-edge --> logistic
   Mat_a[[i]] <- 1 / (1 + exp(-(mids[[i]] - LFQmedmodel1[[i]]$Lmat) /
