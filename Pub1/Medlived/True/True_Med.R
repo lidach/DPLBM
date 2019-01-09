@@ -18,9 +18,6 @@ list <- readRDS("Medlist.rds")
 iters <- 300
 
 Medlived1 <- Medlived
-# max(list$inds[[1]][[1]][,5])
-# list$inds[[1]][[1]][,6][max(list$inds[[1]][[1]][,5])]
-
 
 for(i in 1:iters){
   Medlived1[[i]]$Linf <- 64.6
@@ -35,6 +32,7 @@ for(i in 1:iters){
 setwd("D:/DPLBM/Pub1/Medlived/True")
 saveRDS(Medlived1, file = "LFQmedmodel.rds")
 
+rm(list = ls())
 
 
 
@@ -199,12 +197,6 @@ for(i in 1:iters){
 saveRDS(Medlived_res_bheq, file = "Medmodel_res_bheq.rds")
 
 
-#' Extract inputs
-list <- list()
-for(i in 1:iters){
-  list[[i]] <- LFQmedmodel_etc$inds[[i]]
-}
-
 ## beta --> find M
 ## 1/beta = -log(0.001)/delta_a_lambda
 ## delta_a_lambda = theor_a - obs_a
@@ -258,10 +250,7 @@ for (i in 1:iters){
   
   W_a[[i]] <- lwa*L_a[[i]]^lwb
   
-  # Jensen definition of natural mortality
-  # M[[i]] <- 1.5*vbk[[i]]
   M[[i]] <- -log(0.001)/dev[i]
-  # M[[i]] <- -log(exp(-M[[i]] * max(LFQmedmodel_etc$inds[[i]][[1]][,1])))/dev[i]
   # M[[i]] <- LFQmedmodel1[[i]]$M
   
   # instead of knife-edge --> logistic
@@ -436,12 +425,6 @@ for(i in 1:iters){
                             nseasons = 1)
 }
 
-
-# par(mfrow=c(2,2))
-# plot(lh$L_a, type="l", lwd=3, col="forestgreen", xlab="Age", ylab="Length")
-# plot(lh$W_a, type="l", lwd=3, col="forestgreen", xlab="Age", ylab="Weight")
-# plot(lh$Mat_l, type="l", lwd=3, col="forestgreen", xlab="Length", ylab="Proportion mature")
-# plot(lh$S_l, type="l", lwd=3, col="forestgreen", xlab="Length", ylab="Proportion vulnerable to gear")
 
 
 #' set up data
