@@ -2,8 +2,8 @@
 require(TropFishR)
 require(LBSPR)
 require(LIME)
+require(fishdynr)
 require(fishmethods)
-
 
 
 
@@ -59,70 +59,28 @@ for (i in 1:iters){
 LFQlongmodel2 <- LFQlongmodel1
 res_cc <- list()
 for (i in 1:iters){
-  res_cc[[i]] <- catchCurve(LFQlongmodel2[[i]], reg_int = c(7,24), calc_ogive = T)
+  res_cc[[i]] <- catchCurve(LFQlongmodel2[[i]], auto = TRUE, calc_ogive = T)
+  res_cc[[i]]$wqs <- (res_cc[[i]]$L75 - res_cc[[i]]$L50)*2
 }
 
 
-# res_cc[[i]] <- catchCurve(LFQlongmodel2[[i]], reg_int = NULL, calc_ogive = T)
-
-p <- NA
-for (i in 1:iters){
-  if(res_cc[[i]]$FM[[1]] < 0) {
-    p[i] <- F }
-  else{
-    p[i] <- 1}
-}
-
-which(p %in% 0)
-
-for(i in 1:iters){
-  p[[i]] <- res_cc[[i]]$FM
-}
-
-
-for(i in 1:iters){
-  LFQlongmodel2[[i]]$Z <- res_cc[[i]]$Z
-  LFQlongmodel2[[i]]$FM <- as.numeric(res_cc[[i]]$Z - res_cc[[i]]$M)
-  LFQlongmodel2[[i]]$E <- res_cc[[i]]$FM[[1]]/res_cc[[i]]$Z
-  LFQlongmodel2[[i]]$L50 <- res_cc[[i]]$L50
-  LFQlongmodel2[[i]]$L75 <- res_cc[[i]]$L75
-}
-
-saveRDS(res_cc, file = "Longmodel_res_cc.rds")
-
-
-#' CA
 LFQlongmodel3 <- LFQlongmodel2
-# a <- c(which(p %in% NA))
+
 for(i in 1:iters){
-  LFQlongmodel3[[i]] <- lfqModifydev(LFQlongmodel3[[i]], plus_group = TRUE)
+  LFQlongmodel3[[i]] <- lfqModify(LFQlongmodel3[[i]], plus_group = "Linf")
   LFQlongmodel3[[i]]$a <- 0.0123
   LFQlongmodel3[[i]]$b <- 3.035
+  LFQlongmodel3[[i]]$FM <- res_cc[[i]]$Z - LFQlongmodel3[[i]]$M  
+  LFQlongmodel3[[i]]$E <- LFQlongmodel3[[i]]$FM / res_cc[[i]]$Z 
+  LFQlongmodel3[[i]]$wmat <- 0.15 * LFQlongmodel3[[i]]$Lmat # default definition of wmat
 }
 
-
-dev.off()
-vpa_res <- list()
+## selectivity from CC
 for(i in 1:iters){
-  vpa_res[[i]] <- VPA(LFQlongmodel3[[i]], terminalF = LFQlongmodel3[[i]]$FM, analysis_type = "CA", plot = F)
+  LFQlongmodel3[[i]]$FM <- LFQlongmodel3[[i]]$FM * logisticSelect(LFQlongmodel3[[i]]$midLengths,
+                                                                    res_cc[[i]]$L50, res_cc[[i]]$wqs)
 }
 
-for(i in 1:iters){
-  LFQlongmodel3[[i]]$FM <- vpa_res[[i]]$FM_calc
-}
-
-
-p <- NA
-for (i in 1:iters){
-  if(vpa_res[[i]]$annualMeanNr[1] < 0) {
-    p[i] <- F }
-  else{
-    p[i] <- 1}
-}
-
-
-
-saveRDS(vpa_res, file = "Longmodel_res_CA.rds")
 
 
 #' TB
@@ -138,15 +96,10 @@ for (i in 1:iters){
 }
 
 
-
-#' save data
-saveRDS(res_TB2, file = "Longmodel_res_TB2.rds")
+saveRDS(res_cc, file = "Longmodel_res_cc.rds")
+saveRDS(res_TB2, file = "Longmodel_res_TB.rds")
 
 rm(list = ls())
-
-
-
-
 
 
 
@@ -263,54 +216,84 @@ rm(list = ls())
 
 
 
-## Sustainability Benchmarks ####
+## Length-Based Risk Analysis ####
 ## functions
-calc_abund_SB <- function (ages, M, F, R0)
-{
-  N_a <- rep(NA, length(ages))
-  N_a[1] <- R0
+
+calc_abund_SB <- function(ages, Sl_a, M, FM, R0){
+  
+  N_a <- R0
+  
+  Fmat <- NA
+  for(i in 1:length(Sl_a)){
+    Fmat[i] <- Sl_a[i] * FM
+  }
+  
+  dt <- diff(ages)
+  
   for (i in 2:length(ages)) {
     if (i < length(ages))
-      N_a[i] <- N_a[i - 1] * exp(-(M + F))
+      N_a[i] <- N_a[i - 1] * exp(-(M + Fmat[i-1])*dt[i - 1])
     if (i == length(ages))
-      N_a[i] <- N_a[i - 1] * exp(-(M + F))/(1 - exp(-(M + F)))
+      N_a[i] <- N_a[i - 1] * exp(-(M + Fmat[i-1])*dt[i - 1])/(1 - exp(-(M + Fmat[i-1])*dt[i - 1]))
   }
   return(N_a)
 }
 
-SPR_SB <- function(ages, Mat_a, W_a, M, F){
-  Na0 <- calc_abund_SB(ages = ages, M = M, F = 0, R0 = R0)
-  Naf <- calc_abund_SB(ages = ages, M = M, F = F, R0 = R0)
+
+SPR_SB <- function(ages, Sl_a, Mat_a, W_a, M, FM){
+  
+  dt <- diff(ages)[1]
+  
+  Na0 <- calc_abund_SB(ages = ages, Sl_a, M = M, FM = 0, R0 = R0)
+  Naf <- calc_abund_SB(ages = ages, Sl_a, M = M, FM = FM, R0 = R0)
+  
   # fished and unfished
-  SB0 <- sum(Na0*Mat_a*W_a)
-  SBf <- sum(Naf*Mat_a*W_a)
+  SB0 <- sum(Na0*Mat_a*W_a)*dt
+  SBf <- sum(Naf*Mat_a*W_a)*dt
+  
   # Compute and return SPR value
   SPR <- SBf/SB0
 }
 
-YPR_SB <- function(F, ages, M, R0, W_a) {
-  Nage <- calc_abund_SB(ages = ages, M = M, F = F, R0 = R0)
-  YPR <- F * sum(Nage * W_a)
+YPR_SB <- function(FM, ages, M, R0, W_a, Sl_a) {
+  
+  dt <- diff(ages)[1]
+  
+  Nage <- calc_abund_SB(ages = ages, Sl_a = Sl_a,  M = M, FM = FM, R0 = R0)
+  YPR <- FM * sum(Nage * W_a * Sl_a) * dt
+  
   return(YPR)
 }
 
-
+SSB_SB <- function(ages, Sl_a, Mat_a, W_a, M, FM){
+  
+  dt <- diff(ages)[1]
+  
+  Nage <- calc_abund_SB(ages = ages, Sl_a = Sl_a, M = M, FM = FM, R0 = R0)
+  SSB <- sum(Nage * Mat_a * W_a) * dt
+  
+  return(SSB)
+}
 
 
 modpath <- "D:/DPLBM/Pub1/Longlived/True"
 setwd(modpath)
 LFQlongmodel <- readRDS("LFQlongmodel.rds")
-LFQlongmodel_etc <- readRDS("Longmodel_list.rds")
 iters <- 300
 
 
 #' BH eq - fishmethods
-Longmodel_res_bheq <- list()
+Longlived_res_bheq <- list()
 LFQlongmodel1 <- LFQlongmodel 
+
+len <- list()
+for(i in 1:iters){ 
+  len[[i]] <- rep(LFQlongmodel1[[i]]$midLengths, rowSums(LFQlongmodel1[[i]]$catch))
+}
 
 max <- list()
 for (i in 1:iters){
-  max[[i]] <- max(LFQlongmodel_etc$inds[[i]][[1]][,2])
+  max[[i]] <- max(LFQlongmodel1[[i]]$midLengths)
   if (max[[i]] > LFQlongmodel1[[i]]$Linf){
     max[[i]] = LFQlongmodel1[[i]]$Linf
   }
@@ -321,25 +304,37 @@ for(i in 1:iters){
   LFQlongmodel1[[i]]$L50 <- res_cc[[i]]$L50
 }
 
+set.seed(1)
+
+source("~/DPLBM/bheq_mod.R")
 
 for(i in 1:iters){
-  Longmodel_res_bheq[[i]] <- bheq(LFQlongmodel_etc$inds[[i]][[1]][,2], type = 2, K = LFQlongmodel1[[i]]$K, Linf = LFQlongmodel1[[i]]$Linf, Lc = LFQlongmodel1[[i]]$L50, La = max[[i]], nboot = 500)
+  Longlived_res_bheq[[i]] <- bheq_LBRA(len[[i]], type = 2, K = LFQlongmodel1[[i]]$K, Linf = LFQlongmodel1[[i]]$Linf, Lc = LFQlongmodel1[[i]]$L50, La = max[[i]], nboot = 200)
 }
 
-saveRDS(Longmodel_res_bheq, file = "Longmodel_res_bheq.rds")
+saveRDS(Longlived_res_bheq, file = "Longmodel_res_bheq.rds")
 
 
-#' Extract inputs
-list <- list()
+## beta --> find M
+## 1/beta = -log(0.001)/delta_a_lambda
+## delta_a_lambda = theor_a - obs_a
+del_a <- NA
+dev <- NA
 for(i in 1:iters){
-  list[[i]] <- LFQlongmodel_etc$inds[[i]]
+  del_a[i] <-  LFQlongmodel1[[i]]$tmax - ceiling(-log(0.001)/LFQlongmodel1[[i]]$M)
+  dev[i] <- ceiling(-log(0.001)/LFQlongmodel1[[i]]$M) + (del_a[i] / -log(0.001))
 }
+
 
 
 lwa = 0.0123
 lwb = 3.035
 t0 <- -0.01
 R0 <- 1
+tincr <- 1/12 # monthly
+binwidth <- 3
+CV <- 0.07
+
 
 linf <- list()
 vbk <- list()
@@ -348,36 +343,69 @@ L_a <- list()
 W_a <- list()
 Mat_a <- list()
 M <- list()
-F <- list()
+FM <- list()
+Sl_a <- list()
+mids <- list()
+highs <- list()
+lows <- list()
+plba_a <- list()
+Mat <- list()
+
+lbprobs <- function(mnl, sdl) return(pnorm(highs[[i]], mnl, sdl) - pnorm(lows[[i]], mnl, sdl))
+vlprobs <- Vectorize(lbprobs, vectorize.args = c("mnl", "sdl"))
+
 for (i in 1:iters){
   linf[[i]] <- LFQlongmodel1[[i]]$Linf
   vbk[[i]] <- LFQlongmodel1[[i]]$K
-  ages[[i]] <- 0:LFQlongmodel1[[i]]$tmax
+  ages[[i]] <- seq(0, LFQlongmodel1[[i]]$tmax, tincr)
   L_a[[i]] <- linf[[i]]*(1-exp(-vbk[[i]]*(ages[[i]] - t0)))
+  
+  mids[[i]] <- seq((binwidth/2), linf[[i]]*1.5, binwidth)
+  highs[[i]] <- mids[[i]] + (binwidth/2)
+  lows[[i]] <- mids[[i]] - (binwidth/2)
+  plba_a[[i]] <- t(vlprobs(L_a[[i]], L_a[[i]] * CV))
+  plba_a[[i]] <- plba_a[[i]] / rowSums(plba_a[[i]])
+  
   W_a[[i]] <- lwa*L_a[[i]]^lwb
-  Mat_a[[i]] <- as.numeric(sum(list[[i]][[1]][,4] > LFQlongmodel1[[i]]$Lmat))
-  M[[i]] <- LFQlongmodel1[[i]]$M
+  
+  M[[i]] <- -log(0.001)/dev[i]
+  # M[[i]] <- LFQlongmodel1[[i]]$M
+  
+  # instead of knife-edge --> logistic
+  Mat_a[[i]] <- 1 / (1 + exp(-(mids[[i]] - LFQlongmodel1[[i]]$Lmat) /
+                               ((LFQlongmodel1[[i]]$Lmat * 0.15) / ( log(0.75/(1-0.75)) - log(0.25/(1-0.25)) ))))
+  Mat_a[[i]] <- apply(t(plba_a[[i]])*Mat_a[[i]], 2, sum)
+  Sl_a[[i]] <- 1 / (1 + exp(-(mids[[i]] - LFQlongmodel1[[i]]$L50) /
+                              (res_cc[[i]]$wqs / ( log(0.75/(1-0.75)) - log(0.25/(1-0.25)) ))))
+  Sl_a[[i]] <- apply(t(plba_a[[i]])*Sl_a[[i]], 2, sum)
 }
 
 for(i in 1:iters){
-  F[[i]] <- Longmodel_res_bheq[[i]]$z - M[[i]]
-  if(F[[i]] < 0){
-    F[[i]] = 0
+  FM[[i]] <- Longlived_res_bheq[[i]]$z - M[[i]]
+  if(FM[[i]] < 0){
+    FM[[i]] = 0
   }
 }
 
 
 #' run model
-Longmodel_res_SB <- list(SPR = rep(NA, 100), YPR = rep(NA, 100))
+Longlived_res_SB <- list(SPR = NA, YPR = NA, Fmsy = NA, Bmsy = NA, FFmsy = NA, BBmsy = NA, FM = NA)
 for (i in 1:iters){
-  Longmodel_res_SB$SPR[[i]] <- SPR_SB(ages[[i]], Mat_a[[i]], W_a[[i]], M[[i]], F[[i]])
-  Longmodel_res_SB$YPR[[i]] <- YPR_SB(F[[i]], ages[[i]], M[[i]], R0, W_a[[i]])
+  Longlived_res_SB$SPR[i] <- SPR_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], FM[[i]])
+  Longlived_res_SB$YPR[i] <- YPR_SB(FM[[i]], ages[[i]], M[[i]], R0, W_a[[i]], Sl_a[[i]])
+  Longlived_res_SB$Fmsy[i] <- optimize(YPR_SB, ages = ages[[i]], M = M[[i]], R0 = R0, W_a = W_a[[i]], Sl_a = Sl_a[[i]], lower = 0, upper = 10, maximum = TRUE)$maximum
+  Longlived_res_SB$Bmsy[i] <- SSB_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], Longlived_res_SB$Fmsy[i])
+  Longlived_res_SB$FFmsy[i] <- FM[[i]]/Longlived_res_SB$Fmsy[i]
+  Longlived_res_SB$BBmsy[i] <- SSB_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], FM[[i]]) / Longlived_res_SB$Bmsy[i]
+  Longlived_res_SB$FM[i] <- FM[[i]]
 }
 
+
 #' save SB
-saveRDS(Longmodel_res_SB, file = "Longmodel_res_SB.rds")
+saveRDS(Longlived_res_SB, file = "Longmodel_res_LBRA.rds")
 
 rm(list = ls())
+
 
 
 
@@ -460,7 +488,7 @@ for (i in 1:iters){
   LBSPR_outs$SL50[[i]] <- lbspr_res[[i]]@Ests[,"SL50"]
   LBSPR_outs$SL95[[i]] <- lbspr_res[[i]]@Ests[,"SL95"]
   LBSPR_outs$FM[[i]] <- lbspr_res[[i]]@Ests[,"FM"]
-  LBSPR_outs$SPR[[i]] <- lbspr_res[[i]]@Ests[,"SPR"]
+  LBSPR_outs$SPR[[i]] <- lbspr_res[[i]]@SPR
   LBSPR_outs$SPR_Var[[i]] <- lbspr_res[[i]]@Vars[,"SPR"]
   LBSPR_outs$SL50_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL50"]
   LBSPR_outs$SL95_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL95"]
@@ -519,12 +547,6 @@ for(i in 1:iters){
 }
 
 
-# par(mfrow=c(2,2))
-# plot(lh$L_a, type="l", lwd=3, col="forestgreen", xlab="Age", ylab="Length")
-# plot(lh$W_a, type="l", lwd=3, col="forestgreen", xlab="Age", ylab="Weight")
-# plot(lh$Mat_l, type="l", lwd=3, col="forestgreen", xlab="Length", ylab="Proportion mature")
-# plot(lh$S_l, type="l", lwd=3, col="forestgreen", xlab="Length", ylab="Proportion vulnerable to gear")
-
 
 #' set up data
 for(i in 1:iters){
@@ -548,21 +570,34 @@ for (i in 1:iters){
 }
 
 #' Run LIME
-Longmodel_res_LIME <- list()
+Longlived_res_LIME <- list()
+# data_all <- list()
+# 
+# for(i in 1:iters){
+#   data_all[[i]] <- create_inputs(lh = lh[[i]], input_data = data_LF[[i]])
+# }
 
 # a <- c(which(p %in% "The model is likely not converged"))
-for (i in 1:iters){
-  Longmodel_res_LIME[[i]] <- run_LIME(modpath = NULL,
-                                      lh = lh[[i]],
-                                      input_data = data_LF[[i]],
-                                      est_sigma = "log_sigma_R",
-                                      data_avail = "LC")
+for (i in 1:300){
+  Longlived_res_LIME[[i]] <- run_LIME(modpath = NULL,
+                                        # input = data_all[[i]],
+                                        lh = lh[[i]],
+                                        input_data = data_LF[[i]],
+                                        est_sigma = "log_sigma_R",
+                                        data_avail = "LC"
+                                        # derive_quants = TRUE
+  )
 }
 
-p <- list()
-for (i in 1:iters){
-  p[[i]] <- mean(Longmodel_res_LIME[[i]]$Report$SPR_t)
+# calc_derived_quants(Longlived_res_LIME[[i]]$obj, lh[[i]])
+
+for(i in 1:300){
+  Longlived_res_LIME[[i]]$Derived <- Longlived_res_LIME2[[i]]$Derived
 }
 
+saveRDS(Longlived_res_LIME, file = "Longmodel_res_LIME.rds")
 
-saveRDS(Longmodel_res_LIME, file = "Longmodel_res_LIME.rds")
+# devtools::install_github("merrillrudd/LIME")
+# devtools::install_github("merrillrudd/LIME@b135ea8d2b9317c3e1a44e90f92a7cd9776938d1")
+
+rm(list = ls())

@@ -1,14 +1,14 @@
 ## calculate expected abundance given constant fishing mortality
 calc_abun <- function(ages, S_a, M, F, R0){
-
+  
   N_a <- R0
-
+  
   Fmat <- NA
   for(i in 1:length(S_a)){
     Fmat[i] <- S_a[i] * F
   }
   Ftotal <- Fmat
-
+  
   dt <- diff(ages) # ******
   for(i in 2:length(ages)){
     if(i < length(ages)) N_a[i] <- N_a[i-1] * exp(-(M + Ftotal[i-1])*dt[i-1]) # ******
@@ -20,26 +20,26 @@ calc_abun <- function(ages, S_a, M, F, R0){
 
 
 calc_msy <- function(ages, S_a, M, F, R0, W_a){
-
+  
   dt <- diff(ages)[1] # ******
   Nages <- calc_abun(ages = ages, S_a = S_a, M = M, F = F, R0 = R0)
   YPR <- sum(Nages * W_a * (1-exp(-M - F)) * (F) / (M + F)) * dt # ******
-
+  
   return(YPR)
 }
 
 calc_spr <- function(ages, S_a, M, F, R0, SW_a){ #**************
-
+  
   dt <- diff(ages)[1] # ******
   Nages <- calc_abun(ages = ages, S_a = S_a, M = M, F = F, R0 = R0)
   SPR <- sum(Nages * SW_a * (1-exp(-M - F)))* dt # ******
-
+  
   return(SPR)
 }
 
 
 linf <- 64.6
-vbk <- 0.21
+vbk <- 0.21 
 tincr <- 1/12 # ******
 ages <- seq(0,18,tincr) # ******
 lwa = 0.018
@@ -48,14 +48,13 @@ t0 <- -0.01
 L_a <- linf*(1-exp(-vbk*(ages - t0)))
 W_a <- lwa*L_a^lwb
 M <- 0.32
-SL50 <- 11
+SL50 <- 16
 ML50 <- 34
 R0 <- 1
-CV <- 0.1
+CV <- (0.1 * linf)*(1-(exp(-(0.1*vbk)*(ages-t0))))^2 # add CV of linf and vbk
 wqs <- SL50 * 0.2
 wmat <- ML50 * 0.2
-binwidth <- 1
-
+binwidth <- 2
 
 mids <- seq((binwidth/2), linf*1.5, binwidth)
 highs <- mids + (binwidth/2)
