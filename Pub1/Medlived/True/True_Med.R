@@ -280,6 +280,7 @@ for (i in 1:iters){
   Medlived_res_SB$FFmsy[i] <- FM[[i]]/Medlived_res_SB$Fmsy[i]
   Medlived_res_SB$BBmsy[i] <- SSB_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], FM[[i]]) / Medlived_res_SB$Bmsy[i]
   Medlived_res_SB$FM[i] <- FM[[i]]
+  Medlived_res_SB$SPRmsy[i] <- SPR_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], Medlived_res_SB$Fmsy[i])
 }
 
 
@@ -338,10 +339,20 @@ for(i in 1:iters){
 }
 
 
+# fmsy calc
+OptYield <- function(logF, LHpars) {
+  LHpars@FM <- exp(logF)/LHpars@M
+  Sim <- LBSPRsim(LHpars)
+  -Sim@Yield
+}
+
+
 
 
 #' run model
 lbspr_res <- list()
+FMSY <- NA
+SPRmsy <- list()
 for(i in 1:iters){
   PARSmed <- new("LB_pars")
   PARSmed@Linf <- LFQmedmodel1[[i]]$Linf
@@ -349,6 +360,8 @@ for(i in 1:iters){
   PARSmed@L_units <- "cm"
   PARSmed@L50 <- LFQmedmodel[[i]]$Lmat
   PARSmed@L95 <- LFQmedmodel[[i]]$Lmat * 1.3 # definition
+  PARSmed@SL50 <- res_cc[[i]]$L50
+  PARSmed@SL95 <- res_cc[[i]]$L95
   PARSmed@Walpha <- a
   PARSmed@Wbeta <- b
   PARSmed@BinWidth <- 2
@@ -361,10 +374,35 @@ for(i in 1:iters){
   SPRmed@NYears <- 1
   
   lbspr_res[[i]] <- tryCatch(LBSPRfit(LB_pars = PARSmed, LB_lengths = SPRmed, yrs = 1, Control = list(modtype = "GTG")))
+  
+  # Fmsy
+  PARSmed@Steepness <- 0.99
+  PARSmed@SL50 <- lbspr_res[[i]]@Ests[,"SL50"]
+  PARSmed@SL95 <- lbspr_res[[i]]@Ests[,"SL95"]
+  
+  PARSmed@M <- LFQmedmodel1[[i]]$M
+  PARSmed@BinMax <- 1.3 * PARSmed@Linf
+  PARSmed@BinMin <- 0
+  PARSmed@BinWidth <- 2
+  
+  opt <- optimise(OptYield, interval=log(c(0.001, 0.8)), LHpars= PARSmed)
+  
+  FMSY[i] <- exp(opt$minimum)
+  
+  
+  # SPR msy
+  PARSmed@FM <- FMSY[i]/LFQmedmodel1[[i]]$M
+  
+  SPRmsy[[i]] <- LBSPRsim(PARSmed)
+  
+  # FVec <- seq(0, FMSY*2, by=0.01)
+  # Yields <- -sapply(log(FVec), OptYield, LHpars=LHpars)/MSY
+  # plot(FVec, Yields, xlab="Fishing mortality (apical)", ylab="Yield/MSY", type="l")
+  
 }
 
 #' save data
-LBSPR_outs <- list(pLCatch = list(rep(NA, 100)), SL50 = NA, SL95 = NA, FM = NA, SPR = NA, SPR_Var = NA, SL50_Var = NA, SL95_Var = NA, FM_Var = NA)
+LBSPR_outs <- list(pLCatch = list(rep(NA, 100)), SL50 = NA, SL95 = NA, FM = NA, SPR = NA, SPR_Var = NA, SL50_Var = NA, SL95_Var = NA, FM_Var = NA, Fmort = NA, Fmsy = NA, FFmsy = NA, SPRmsy = NA)
 for (i in 1:iters){
   LBSPR_outs$pLCatch[[i]] <- lbspr_res[[i]]@pLCatch
   LBSPR_outs$SL50[[i]] <- lbspr_res[[i]]@Ests[,"SL50"]
@@ -375,6 +413,9 @@ for (i in 1:iters){
   LBSPR_outs$SL50_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL50"]
   LBSPR_outs$SL95_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL95"]
   LBSPR_outs$FM_Var[[i]] <- lbspr_res[[i]]@Vars[,"FM"]
+  LBSPR_outs$Fmort[[i]] <- lbspr_res[[i]]@Ests[,"FM"] * 0.32
+  LBSPR_outs$Fmsy[[i]] <- FMSY[i]
+  LBSPR_outs$SPRmsy[[i]] <- SPRmsy[[i]]@SPR
 }
 saveRDS(LBSPR_outs, file = "Medmodel_res_LBSPR.rds")
 
