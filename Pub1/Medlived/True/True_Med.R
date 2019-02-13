@@ -415,6 +415,7 @@ for (i in 1:iters){
   LBSPR_outs$FM_Var[[i]] <- lbspr_res[[i]]@Vars[,"FM"]
   LBSPR_outs$Fmort[[i]] <- lbspr_res[[i]]@Ests[,"FM"] * 0.32
   LBSPR_outs$Fmsy[[i]] <- FMSY[i]
+  LBSPR_outs$FFmsy[[i]] <- LBSPR_outs$Fmort[[i]]/FMSY[i]
   LBSPR_outs$SPRmsy[[i]] <- SPRmsy[[i]]@SPR
 }
 saveRDS(LBSPR_outs, file = "Medmodel_res_LBSPR.rds")

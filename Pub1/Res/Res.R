@@ -15,8 +15,8 @@ Med_TB <- readRDS("D:/DPLBM/Pub1/Medlived/True/Medmodel_res_TB.rds")
 
 # Medium (base) ---------------------------------------------------------------------
 ## SPR ####
-## 0.422
-SPRTrue <- rep(0.422, iters)
+## 0.44736870
+SPRTrue <- rep(0.44736870, iters)
 LIMESPR <- sapply(Med_LIME, function(x) x$Report$SPR_t)
 TBSPR <- sapply(Med_TB, function(x) x$currents$curr.SPR)
 
@@ -24,6 +24,18 @@ Med_LBRA_SPR <- calc_error(SPRTrue, Med_LBRA$SPR, iters)
 Med_LBSPR_SPR <- calc_error(SPRTrue, Med_LBSPR$SPR, iters)
 Med_LIME_SPR <- calc_error(SPRTrue, LIMESPR, iters)
 Med_TB_SPR <- calc_error(SPRTrue, TBSPR, iters)
+
+# SPRmsy = 0.183
+SPRmsyT <- rep(0.183, iters)
+# LIMESPR *****
+# TBSPR ****
+
+Med_LBRA_SPRmsy <- calc_error(SPRmsyT, Med_LBRA$SPRmsy, iters)
+Med_LBSPR_SPRmsy <- calc_error(SPRmsyT, Med_LBSPR$SPRmsy, iters)
+# Med_LIME_SPRmsy <- calc_error(SPRmsyT, LIMESPR, iters)
+# Med_TB_SPRmsy <- calc_error(SPRmsyT, TBSPR, iters)
+
+
 
 # F based reference points ####
 # F = 0.128
@@ -34,35 +46,37 @@ TBFM <- sapply(Med_TB, function(x) x$currents$curr.F)
 Med_LBRA_FM <- calc_error(FMTrue, Med_LBRA$FM, iters)
 Med_LIME_FM <- calc_error(FMTrue, LIMEFM, iters)
 Med_TB_FM <- calc_error(FMTrue, TBFM, iters)
-Med_LBSPR_FM <- calc_error(FMTrue, Med_LBSPR$FM*0.32, iters)
+Med_LBSPR_FM <- calc_error(FMTrue, Med_LBSPR$Fmort, iters)
 
-# Fmsy = 0.249
-FmsyTrue <- rep(0.249, iters)
+# Fmsy = 0.306
+FmsyTrue <- rep(0.306, iters)
 LIMEFmsy <- sapply(Med_LIME, function(x) x$Derived$Fmsy)
-TBFmsy <- sapply(Med_TB, function(x) x$df_Es$Fmax) # Fmax vs Fmsy??
+TBFmsy <- sapply(Med_TB, function(x) x$df_Es$Fmax)
 
 Med_LBRA_Fmsy <- calc_error(FmsyTrue, Med_LBRA$Fmsy, iters)
 Med_LIME_Fmsy <- calc_error(FmsyTrue, LIMEFmsy, iters)
 Med_TB_Fmsy <- calc_error(FmsyTrue, TBFmsy, iters)
+Med_LBSPR_Fmsy <- calc_error(FmsyTrue, Med_LBSPR$Fmsy, iters)
 
-# F01 = 0.173
-F01True <- rep(0.173, iters)
+# F01 = 0.204
+F01True <- rep(0.204, iters)
 TBF01 <- sapply(Med_TB, function(x) x$df_Es$F01)
 
 Med_TB_F01 <- calc_error(F01True, TBF01, iters)
 
-# F/Fmsy = 0.5140562
-FFmsyTrue <- rep(0.5140562, iters)
+# F/Fmsy = 0.4183007
+FFmsyTrue <- rep(0.4183007, iters)
 LIMEFFmsy <- sapply(Med_LIME, function(x) x$Derived$FFmsy)
 TBFFmsy <- sapply(Med_TB, function(x) x$currents$curr.F/x$df_Es$Fmax)
 
 Med_LBRA_FFmsy <- calc_error(FFmsyTrue, Med_LBRA$FFmsy, iters)
 Med_LIME_FFmsy <- calc_error(FFmsyTrue, LIMEFFmsy, iters)
 Med_TB_FFmsy <- calc_error(FFmsyTrue, TBFFmsy, iters)
-# Med_LBSPR_FFmsy
+Med_LBSPR_FFmsy <- calc_error(FFmsyTrue, Med_LBSPR$FFmsy, iters)
 
-# F/F01 = 0.7398844
-FF01True <- rep(0.7398844, iters)
+
+# F/F01 = 0.627451
+FF01True <- rep(0.627451, iters)
 TBFF01 <- sapply(Med_TB, function(x) x$currents$curr.F/x$df_Es$F01)
 
 Med_TB_FF01 <- calc_error(FF01True, TBFF01, iters)
