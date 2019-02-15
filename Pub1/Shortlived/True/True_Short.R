@@ -284,6 +284,7 @@ for (i in 1:iters){
   Shortlived_res_SB$FFmsy[i] <- FM[[i]]/Shortlived_res_SB$Fmsy[i]
   Shortlived_res_SB$BBmsy[i] <- SSB_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], FM[[i]]) / Shortlived_res_SB$Bmsy[i]
   Shortlived_res_SB$FM[i] <- FM[[i]]
+  Shortlived_res_SB$SPRmsy[i] <- SPR_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], Shortlived_res_SB$Fmsy[i])
 }
 
 
@@ -344,10 +345,19 @@ for(i in 1:iters){
 }
 
 
+# fmsy calc
+OptYield <- function(logF, LHpars) {
+  LHpars@FM <- exp(logF)/LHpars@M
+  Sim <- LBSPRsim(LHpars)
+  -Sim@Yield
+}
+
 
 
 #' run model
 lbspr_res <- list()
+FMSY <- NA
+SPRmsy <- list()
 for(i in 1:iters){
   PARSshort <- new("LB_pars")
   PARSshort@Linf <- LFQshortmodel1[[i]]$Linf
@@ -367,6 +377,26 @@ for(i in 1:iters){
   SPRshort@NYears <- 1
   
   lbspr_res[[i]] <- tryCatch(LBSPRfit(LB_pars = PARSshort, LB_lengths = SPRshort, yrs = 1, Control = list(modtype = "GTG")))
+  
+  # Fmsy
+  PARSshort@Steepness <- 0.99
+  PARSshort@SL50 <- lbspr_res[[i]]@Ests[,"SL50"]
+  PARSshort@SL95 <- lbspr_res[[i]]@Ests[,"SL95"]
+  
+  PARSshort@M <- LFQshortmodel1[[i]]$M
+  PARSshort@BinMax <- 1.3 * PARSshort@Linf
+  PARSshort@BinMin <- 0
+  PARSshort@BinWidth <- 1
+  
+  opt <- optimise(OptYield, interval=log(c(0.001, 0.8)), LHpars= PARSshort)
+  
+  FMSY[i] <- exp(opt$minimum)
+  
+  
+  # SPR msy
+  PARSshort@FM <- FMSY[i]/LFQshortmodel1[[i]]$M
+  
+  SPRmsy[[i]] <- LBSPRsim(PARSshort)
 }
 
 #' save data
@@ -381,6 +411,10 @@ for (i in 1:iters){
   LBSPR_outs$SL50_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL50"]
   LBSPR_outs$SL95_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL95"]
   LBSPR_outs$FM_Var[[i]] <- lbspr_res[[i]]@Vars[,"FM"]
+  LBSPR_outs$Fmort[[i]] <- lbspr_res[[i]]@Ests[,"FM"] * LFQshortmodel1[[i]]$M
+  LBSPR_outs$Fmsy[[i]] <- FMSY[i]
+  LBSPR_outs$FFmsy[[i]] <- LBSPR_outs$Fmort[[i]]/FMSY[i]
+  LBSPR_outs$SPRmsy[[i]] <- SPRmsy[[i]]@SPR
 }
 saveRDS(LBSPR_outs, file = "Shortmodel_res_LBSPR.rds")
 

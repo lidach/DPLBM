@@ -413,7 +413,7 @@ for (i in 1:iters){
   LBSPR_outs$SL50_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL50"]
   LBSPR_outs$SL95_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL95"]
   LBSPR_outs$FM_Var[[i]] <- lbspr_res[[i]]@Vars[,"FM"]
-  LBSPR_outs$Fmort[[i]] <- lbspr_res[[i]]@Ests[,"FM"] * 0.32
+  LBSPR_outs$Fmort[[i]] <- lbspr_res[[i]]@Ests[,"FM"] * LFQmedmodel[[i]]$M
   LBSPR_outs$Fmsy[[i]] <- FMSY[i]
   LBSPR_outs$FFmsy[[i]] <- LBSPR_outs$Fmort[[i]]/FMSY[i]
   LBSPR_outs$SPRmsy[[i]] <- SPRmsy[[i]]@SPR

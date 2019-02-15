@@ -103,119 +103,6 @@ rm(list = ls())
 
 
 
-
-## LBRP ################################
-## functions 
-HCR.VBGF <- function(Linf, K, t0, ages){
-  Lengths_exp <- Linf * (1 - exp(-K * (ages - t0)))
-  return(Lengths_exp)
-}
-
-HCR.LtWt.fit <- function(a, b, Lts){
-  exp.wts <- a*Lts^b
-  return(exp.wts)
-}
-
-Calc_Pobjs <- function(catch_prop, midLengths, Lmat, Lopt0.9, Lopt1.1){
-  Lmat_ind <- midLengths >= Lmat
-  Lopt_ind <- midLengths > Lopt0.9 & midLengths < Lopt1.1
-  Lmega_ind <- midLengths >= Lopt1.1
-  Pmat <- sum(catch_prop[Lmat_ind])
-  Popt <- sum(catch_prop[Lopt_ind])
-  Pmega <- sum(catch_prop[Lmega_ind])
-  Pobj <- Pmat + Popt + Pmega
-  Pmat.opt.mega <- matrix(c(Pmat, Popt, Pmega, Pobj), nrow = 4, ncol = 1)
-  rownames(Pmat.opt.mega) <- c("Pmat", "Popt", "Pmega", "Pobj")
-  colnames(Pmat.opt.mega) <- "Value"
-  return(Pmat.opt.mega)
-}
-
-Froese.plus <- function(catch_prop, midLengths, Linf, K, t0, M, a, b, Lmat, ages){
-  Lts <- HCR.VBGF(Linf, K, t0, ages)
-  Wts <- HCR.LtWt.fit(a, b, Lts)
-  stable.biomass <- (1*exp(-M*ages))*Wts
-  Lopt <- Lts[stable.biomass == max(stable.biomass)]
-  Lopt0.9 <- Lopt * 0.9
-  Lopt1.1 <- round(1.1 * Lopt, 1)
-  yrs <- 1
-  Pobjs.out <- matrix(NA, nrow = 4, ncol = length(yrs), dimnames = list(c("Pmat", "Popt", "Pmega", "Pobj"), yrs))
-  for(i in 1:length(yrs)){
-    cab.Pobjs.yr <- Calc_Pobjs(catch_prop, midLengths, Lmat, Lopt0.9, Lopt1.1)
-    Pobjs.out[,i] <- as.numeric(cab.Pobjs.yr)
-  }
-  Pcalc.out <- list()
-  Pcalc.out[[1]] <- Pobjs.out
-  Pcalc.out[[2]] <- c(Lmat, Lopt, Lopt1.1)
-  names(Pcalc.out[[2]]) <- c("Lmat", "Lopt", "Lmega")
-  Pcalc.out[[3]]<- Lmat/Lopt
-  names(Pcalc.out)[[1]] <- "Pout"
-  names(Pcalc.out)[[2]] <- "Lx"
-  names(Pcalc.out)[[3]] <- "Lmat/Lopt"
-  return(Pcalc.out)
-}
-
-
-
-modpath <- "D:/DPLBM/Pub1/Longlived/True"
-setwd(modpath)
-LFQlongmodel <- readRDS("LFQlongmodel.rds")
-iters <- 300
-
-
-#' set up catch prop
-catch <- list()
-catch_year <- list()
-LFQlongmodel1 <- LFQlongmodel
-for(i in 1:iters){
-  catch[[i]] <- t(LFQlongmodel1[[i]]$catch)
-  catch_year[[i]] <- rep(NA, length.out = ncol(catch[[i]]))
-  catch_year[[i]] <- colSums(catch[[i]])
-}
-
-catch_prop <- list()
-for(i in 1:length(catch_year)){
-  catch_prop[[i]] <- catch_year[[i]]/sum(catch_year[[i]])
-}
-
-ages <- list()
-for(i in 1:iters){
-  ages[[i]] <- 0:LFQlongmodel1[[i]]$tmax
-}
-
-t0 <- -0.01
-a = 0.0123
-b = 3.035
-
-Linf <- list()
-K <- list()
-M <- list()
-Lmat <- list()
-midLengths <- list()
-for(i in 1:iters){
-  Linf[[i]] <- LFQlongmodel1[[i]]$Linf 
-  K[[i]] <- LFQlongmodel1[[i]]$K
-  M[[i]] <- LFQlongmodel1[[i]]$M
-  Lmat[[i]] <- LFQlongmodel1[[i]]$Lmat
-  midLengths[[i]] <- LFQlongmodel1[[i]]$midLengths
-}
-
-Longmodel_res_LBRP <- list()
-for(i in 1:iters){
-  Longmodel_res_LBRP[[i]] <- Froese.plus(catch_prop[[i]], midLengths[[i]], Linf[[i]], K[[i]], t0, M[[i]], a, b, Lmat[[i]], ages[[i]])
-}
-
-#' save data
-saveRDS(Longmodel_res_LBRP, file = "Longmodel_res_LBRP.rds")
-
-rm(list = ls())
-
-
-
-
-
-
-
-
 ## Length-Based Risk Analysis ####
 ## functions
 
@@ -398,6 +285,7 @@ for (i in 1:iters){
   Longlived_res_SB$FFmsy[i] <- FM[[i]]/Longlived_res_SB$Fmsy[i]
   Longlived_res_SB$BBmsy[i] <- SSB_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], FM[[i]]) / Longlived_res_SB$Bmsy[i]
   Longlived_res_SB$FM[i] <- FM[[i]]
+  Longlived_res_SB$SPRmsy[i] <- SPR_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], Longlived_res_SB$Fmsy[i])
 }
 
 
@@ -456,6 +344,20 @@ for(i in 1:iters){
 }
 
 
+# fmsy calc
+OptYield <- function(logF, LHpars) {
+  LHpars@FM <- exp(logF)/LHpars@M
+  Sim <- LBSPRsim(LHpars)
+  -Sim@Yield
+}
+
+
+
+
+#' run model
+lbspr_res <- list()
+FMSY <- NA
+SPRmsy <- list()
 
 
 #' run model
@@ -479,6 +381,27 @@ for(i in 1:iters){
   SPRlong@NYears <- 1
   
   lbspr_res[[i]] <- tryCatch(LBSPRfit(LB_pars = PARSlong, LB_lengths = SPRlong, yrs = 1, Control = list(modtype = "GTG")))
+  
+  # Fmsy
+  PARSlong@Steepness <- 0.99
+  PARSlong@SL50 <- lbspr_res[[i]]@Ests[,"SL50"]
+  PARSlong@SL95 <- lbspr_res[[i]]@Ests[,"SL95"]
+  
+  PARSlong@M <- LFQlongmodel1[[i]]$M
+  PARSlong@BinMax <- 1.3 * PARSlong@Linf
+  PARSlong@BinMin <- 0
+  PARSlong@BinWidth <- 3
+  
+  opt <- optimise(OptYield, interval=log(c(0.001, 0.8)), LHpars= PARSlong)
+  
+  FMSY[i] <- exp(opt$minimum)
+  
+  
+  # SPR msy
+  PARSlong@FM <- FMSY[i]/LFQlongmodel1[[i]]$M
+  
+  SPRmsy[[i]] <- LBSPRsim(PARSlong)
+  
 }
 
 #' save data
@@ -493,6 +416,10 @@ for (i in 1:iters){
   LBSPR_outs$SL50_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL50"]
   LBSPR_outs$SL95_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL95"]
   LBSPR_outs$FM_Var[[i]] <- lbspr_res[[i]]@Vars[,"FM"]
+  LBSPR_outs$Fmort[[i]] <- lbspr_res[[i]]@Ests[,"FM"] * LFQlongmodel[[i]]$M
+  LBSPR_outs$Fmsy[[i]] <- FMSY[i]
+  LBSPR_outs$FFmsy[[i]] <- LBSPR_outs$Fmort[[i]]/FMSY[i]
+  LBSPR_outs$SPRmsy[[i]] <- SPRmsy[[i]]@SPR
 }
 saveRDS(LBSPR_outs, file = "Longmodel_res_LBSPR.rds")
 

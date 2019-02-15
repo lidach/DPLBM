@@ -155,7 +155,7 @@ SSB_SB <- function(ages, Sl_a, Mat_a, W_a, M, FM){
 }
 
 
-modpath <- "D:/DPLBM/Pub1/ARlived/True"
+modpath <- "D:/DPLBM/Pub1/AR/True"
 setwd(modpath)
 LFQARmodel <- readRDS("LFQARmodel.rds")
 iters <- 300
@@ -277,6 +277,7 @@ for (i in 1:iters){
   ARlived_res_SB$FFmsy[i] <- FM[[i]]/ARlived_res_SB$Fmsy[i]
   ARlived_res_SB$BBmsy[i] <- SSB_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], FM[[i]]) / ARlived_res_SB$Bmsy[i]
   ARlived_res_SB$FM[i] <- FM[[i]]
+  ARlived_res_SB$SPRmsy[i] <- SPR_SB(ages[[i]], Sl_a[[i]], Mat_a[[i]], W_a[[i]], M[[i]], ARlived_res_SB$Fmsy[i])
 }
 
 
@@ -290,7 +291,7 @@ rm(list = ls())
 
 
 ## LBSPR ####
-modpath <- "D:/DPLBM/Pub1/ARlived/True"
+modpath <- "D:/DPLBM/Pub1/AR/True"
 setwd(modpath)
 LFQARmodel <- readRDS("LFQARmodel.rds")
 iters <- 300
@@ -335,8 +336,20 @@ for(i in 1:iters){
 }
 
 
+# fmsy calc
+OptYield <- function(logF, LHpars) {
+  LHpars@FM <- exp(logF)/LHpars@M
+  Sim <- LBSPRsim(LHpars)
+  -Sim@Yield
+}
 
 
+
+
+#' run model
+lbspr_res <- list()
+FMSY <- NA
+SPRmsy <- list()
 #' run model
 lbspr_res <- list()
 for(i in 1:iters){
@@ -358,6 +371,26 @@ for(i in 1:iters){
   SPRAR@NYears <- 1
   
   lbspr_res[[i]] <- tryCatch(LBSPRfit(LB_pars = PARSAR, LB_lengths = SPRAR, yrs = 1, Control = list(modtype = "GTG")))
+  
+  # Fmsy
+  PARSAR@Steepness <- 0.99
+  PARSAR@SL50 <- lbspr_res[[i]]@Ests[,"SL50"]
+  PARSAR@SL95 <- lbspr_res[[i]]@Ests[,"SL95"]
+  
+  PARSAR@M <- LFQARmodel1[[i]]$M
+  PARSAR@BinMax <- 1.3 * PARSAR@Linf
+  PARSAR@BinMin <- 0
+  PARSAR@BinWidth <- 2
+  
+  opt <- optimise(OptYield, interval=log(c(0.001, 0.8)), LHpars= PARSAR)
+  
+  FMSY[i] <- exp(opt$minimum)
+  
+  
+  # SPR msy
+  PARSAR@FM <- FMSY[i]/LFQARmodel1[[i]]$M
+  
+  SPRmsy[[i]] <- LBSPRsim(PARSAR)
 }
 
 #' save data
@@ -372,6 +405,10 @@ for (i in 1:iters){
   LBSPR_outs$SL50_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL50"]
   LBSPR_outs$SL95_Var[[i]] <- lbspr_res[[i]]@Vars[,"SL95"]
   LBSPR_outs$FM_Var[[i]] <- lbspr_res[[i]]@Vars[,"FM"]
+  LBSPR_outs$Fmort[[i]] <- lbspr_res[[i]]@Ests[,"FM"] * LFQARmodel[[i]]$M
+  LBSPR_outs$Fmsy[[i]] <- FMSY[i]
+  LBSPR_outs$FFmsy[[i]] <- LBSPR_outs$Fmort[[i]]/FMSY[i]
+  LBSPR_outs$SPRmsy[[i]] <- SPRmsy[[i]]@SPR
 }
 saveRDS(LBSPR_outs, file = "ARmodel_res_LBSPR.rds")
 
