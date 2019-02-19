@@ -239,7 +239,8 @@ vlprobs <- Vectorize(lbprobs, vectorize.args = c("mnl", "sdl"))
 for (i in 1:iters){
   linf[[i]] <- LFQmedmodel1[[i]]$Linf
   vbk[[i]] <- LFQmedmodel1[[i]]$K
-  ages[[i]] <- seq(0, LFQmedmodel1[[i]]$tmax, tincr)
+  # ages[[i]] <- seq(0, LFQmedmodel1[[i]]$tmax, tincr)
+  ages[[i]] <- seq(0, -log(0.001)/LFQmedmodel1[[i]]$M, tincr)
   L_a[[i]] <- linf[[i]]*(1-exp(-vbk[[i]]*(ages[[i]] - t0)))
   
   mids[[i]] <- seq((binwidth/2), linf[[i]]*1.5, binwidth)
