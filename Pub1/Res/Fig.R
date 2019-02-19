@@ -1,4 +1,4 @@
-
+setwd("D:/DPLBM/Pub1/Res")
 
 # Packages and Objects to save --------------------------------------------
 
@@ -254,6 +254,69 @@ Plot.LH_Fmsy1 <- grid.arrange(Plot.LH_Fmsy, tbl,
                             heights = c(3,1))
 
 # ggsave("Plot_FmsyTRUE_LH.png", plot = Plot_FmsyTrue_LH,
+#        scale = 1, width = 14, height = 7, units = "in")
+
+
+
+
+
+## SPRmsy ####
+LH_SPRmsy <- readRDS("files/LH_SPRmsy.rds")
+
+Plot.LH_SPRmsy <- ggplot(LH_SPRmsy, aes(x = Method, y = Relative_error, fill = Method)) +
+  geom_violin(trim = F) +
+  labs(title = "SPRmsy", y = "Relative Error") +
+  stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
+  geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
+  facet_wrap(~ Scenario, ncol = 3, scale = "fixed") +
+  theme_classic() +
+  theme(strip.text.x = element_text(size = 20, colour = "black")) +
+  theme(axis.text.y = element_text(size = 20))
+Plot.LH_SPRmsy
+
+
+LH_SPRmsy.err <- readRDS("files/LH_SPRmsy_err.rds")
+
+tab <- data.frame(
+  TB = round(LH_SPRmsy.err$TB[1, c(1:2)],4),
+  LBSPR = round(LH_SPRmsy.err$LBSPR[1, c(1:2)],4),
+  LIME = round(LH_SPRmsy.err$LIME[1, c(1:2)],4),
+  LBRA = round(LH_SPRmsy.err$LBRA[1, c(1:2)],4),
+  TB = round(LH_SPRmsy.err$TB[2, c(1:2)],4),
+  LBSPR = round(LH_SPRmsy.err$LBSPR[2, c(1:2)],4),
+  LIME = round(LH_SPRmsy.err$LIME[2, c(1:2)],4),
+  LBRA = round(LH_SPRmsy.err$LBRA[2, c(1:2)],4),
+  TB = round(LH_SPRmsy.err$TB[3, c(1:2)],4),
+  LBSPR = round(LH_SPRmsy.err$LBSPR[3, c(1:2)],4),
+  LIME = round(LH_SPRmsy.err$LIME[3, c(1:2)],4),
+  LBRA = round(LH_SPRmsy.err$LBRA[3, c(1:2)],4)
+)
+
+colnames(tab) <- c(expression(TB[Medium]),
+                   expression(LBSPR[Medium]),
+                   expression(LIME[Medium]),
+                   expression(LBRA[Medium]),
+                   expression(TB[Short]),
+                   expression(LBSPR[Short]),
+                   expression(LIME[Short]),
+                   expression(LBRA[Short]),
+                   expression(TB[Long]),
+                   expression(LBSPR[Long]),
+                   expression(LIME[Long]),
+                   expression(LBRA[Long]))
+rownames(tab) <- c("MRE", "MARE")
+
+
+tt <- ttheme_default(colhead=list(fg_params = list(parse=TRUE)))
+tbl <- tableGrob(tab, theme=tt)
+
+
+Plot.LH_SPRmsy1 <- grid.arrange(Plot.LH_SPRmsy, tbl,
+                              nrow = 2,
+                              as.table = TRUE,
+                              heights = c(3,1))
+
+# ggsave("Plot_SPRmsyTRUE_LH.png", plot = Plot_SPRmsyTrue_LH,
 #        scale = 1, width = 14, height = 7, units = "in")
 
 
@@ -578,6 +641,69 @@ Plot.Exp_Fmsy1 <- grid.arrange(Plot.Exp_Fmsy, tbl,
 
 
 
+## SPRmsy ####
+Exp_SPRmsy <- readRDS("files/Exp_SPRmsy.rds")
+
+Plot.Exp_SPRmsy <- ggplot(Exp_SPRmsy, aes(x = Method, y = Relative_error, fill = Method)) +
+  geom_violin(trim = F) +
+  labs(title = "SPRmsy", y = "Relative Error") +
+  stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
+  geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
+  facet_wrap(~ Scenario, ncol = 3, scale = "fixed") +
+  theme_classic() +
+  theme(strip.text.x = element_text(size = 20, colour = "black")) +
+  theme(axis.text.y = element_text(size = 20))
+Plot.Exp_SPRmsy
+
+
+Exp_SPRmsy.err <- readRDS("files/Exp_SPRmsy_err.rds")
+
+tab <- data.frame(
+  TB = round(Exp_SPRmsy.err$TB[1, c(1:2)],4),
+  LBSPR = round(Exp_SPRmsy.err$LBSPR[1, c(1:2)],4),
+  LIME = round(Exp_SPRmsy.err$LIME[1, c(1:2)],4),
+  LBRA = round(Exp_SPRmsy.err$LBRA[1, c(1:2)],4),
+  TB = round(Exp_SPRmsy.err$TB[2, c(1:2)],4),
+  LBSPR = round(Exp_SPRmsy.err$LBSPR[2, c(1:2)],4),
+  LIME = round(Exp_SPRmsy.err$LIME[2, c(1:2)],4),
+  LBRA = round(Exp_SPRmsy.err$LBRA[2, c(1:2)],4),
+  TB = round(Exp_SPRmsy.err$TB[3, c(1:2)],4),
+  LBSPR = round(Exp_SPRmsy.err$LBSPR[3, c(1:2)],4),
+  LIME = round(Exp_SPRmsy.err$LIME[3, c(1:2)],4),
+  LBRA = round(Exp_SPRmsy.err$LBRA[3, c(1:2)],4)
+)
+
+colnames(tab) <- c(expression(TB[Target[),
+                   expression(LBSPR[Target[),
+                   expression(LIME[Target[),
+                   expression(LBRA[Target[),
+                   expression(TB[Unex]),
+                   expression(LBSPR[Unex]),
+                   expression(LIME[Unex]),
+                   expression(LBRA[Unex]),
+                   expression(TB[Ovex]),
+                   expression(LBSPR[Ovex]),
+                   expression(LIME[Ovex]),
+                   expression(LBRA[Ovex]))
+rownames(tab) <- c("MRE", "MARE")
+
+
+tt <- ttheme_default(coExpead=list(fg_params = list(parse=TRUE)))
+tbl <- tableGrob(tab, theme=tt)
+
+
+Plot.Exp_SPRmsy1 <- grid.arrange(Plot.Exp_SPRmsy, tbl,
+                               nrow = 2,
+                               as.table = TRUE,
+                               heights = c(3,1))
+
+# ggsave("Plot_SPRmsyTRUE_Exp.png", plot = Plot_SPRmsyTrue_Exp,
+#        scale = 1, width = 14, height = 7, units = "in")
+
+
+
+
+
 # Rec comparison ----------------------------------------------------------
 
 
@@ -827,6 +953,69 @@ Plot.Rec_Fmsy1 <- grid.arrange(Plot.Rec_Fmsy, tbl,
                               heights = c(3,1))
 
 # ggsave("Plot_FmsyTRUE_Rec.png", plot = Plot_FmsyTrue_Rec,
+#        scale = 1, width = 14, height = 7, units = "in")
+
+
+
+
+
+## SPRmsy ####
+Rec_SPRmsy <- readRDS("files/Rec_SPRmsy.rds")
+
+Plot.Rec_SPRmsy <- ggplot(Rec_SPRmsy, aes(x = Method, y = Relative_error, fill = Method)) +
+  geom_violin(trim = F) +
+  labs(title = "SPRmsy", y = "Relative Error") +
+  stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
+  geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
+  facet_wrap(~ Scenario, ncol = 3, scale = "fixed") +
+  theme_classic() +
+  theme(strip.text.x = element_text(size = 20, colour = "black")) +
+  theme(axis.text.y = element_text(size = 20))
+Plot.Rec_SPRmsy
+
+
+Rec_SPRmsy.err <- readRDS("files/Rec_SPRmsy_err.rds")
+
+tab <- data.frame(
+  TB = round(Rec_SPRmsy.err$TB[1, c(1:2)],4),
+  LBSPR = round(Rec_SPRmsy.err$LBSPR[1, c(1:2)],4),
+  LIME = round(Rec_SPRmsy.err$LIME[1, c(1:2)],4),
+  LBRA = round(Rec_SPRmsy.err$LBRA[1, c(1:2)],4),
+  TB = round(Rec_SPRmsy.err$TB[2, c(1:2)],4),
+  LBSPR = round(Rec_SPRmsy.err$LBSPR[2, c(1:2)],4),
+  LIME = round(Rec_SPRmsy.err$LIME[2, c(1:2)],4),
+  LBRA = round(Rec_SPRmsy.err$LBRA[2, c(1:2)],4),
+  TB = round(Rec_SPRmsy.err$TB[3, c(1:2)],4),
+  LBSPR = round(Rec_SPRmsy.err$LBSPR[3, c(1:2)],4),
+  LIME = round(Rec_SPRmsy.err$LIME[3, c(1:2)],4),
+  LBRA = round(Rec_SPRmsy.err$LBRA[3, c(1:2)],4)
+)
+
+colnames(tab) <- c(expression(TB[None]),
+                   expression(LBSPR[None]),
+                   expression(LIME[None]),
+                   expression(LBRA[None]),
+                   expression(TB[Error]),
+                   expression(LBSPR[Error]),
+                   expression(LIME[Error]),
+                   expression(LBRA[Error]),
+                   expression(TB[AR]),
+                   expression(LBSPR[AR]),
+                   expression(LIME[AR]),
+                   expression(LBRA[AR]))
+rownames(tab) <- c("MRE", "MARE")
+
+
+tt <- ttheme_default(coRecead=list(fg_params = list(parse=TRUE)))
+tbl <- tableGrob(tab, theme=tt)
+
+
+Plot.Rec_SPRmsy1 <- grid.arrange(Plot.Rec_SPRmsy, tbl,
+                               nrow = 2,
+                               as.table = TRUE,
+                               heights = c(3,1))
+
+# ggsave("Plot_SPRmsyTRUE_Rec.png", plot = Plot_SPRmsyTrue_Rec,
 #        scale = 1, width = 14, height = 7, units = "in")
 
 
