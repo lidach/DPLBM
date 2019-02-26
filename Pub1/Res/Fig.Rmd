@@ -1,19 +1,29 @@
-setwd("D:/DPLBM/Pub1/Res")
+---
+title: "Figures"
+output: word_document 
+---
 
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+```
+
+
+```{r}
 # Packages and Objects to save --------------------------------------------
-
-
+setwd("D:/DPLBM/Pub1/Res")
 if(!require(ggplot2)) install.packages("ggplot"); require(ggplot2)
 if(!require(gridExtra)) install.packages("gridExtra"); require(gridExtra)
+```
 
 
+## LH comparison
+### SPR
 
-# LH comparison -----------------------------------------------------------
-## SPR ####
+```{r, fig.width=14, fig.height=8}
 LH_SPR <- readRDS("files/LH_SPR.rds")
 
 Plot.LH_SPR <- ggplot(LH_SPR, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "Spawning Potential Ratio", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -21,7 +31,6 @@ Plot.LH_SPR <- ggplot(LH_SPR, aes(x = Method, y = Relative_error, fill = Method)
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.LH_SPR
 
 
 LH_SPR.err <- readRDS("files/LH_SPR_err.rds")
@@ -67,15 +76,20 @@ Plot.LH_SPR1 <- grid.arrange(Plot.LH_SPR, tbl,
 
 # ggsave("Plot_SPRTRUE_LH.png", plot = Plot_SPRTrue_LH,
 #        scale = 1, width = 14, height = 7, units = "in")
+```
 
 
 
 
-## FFmsy ####
+
+### FFmsy 
+```{r, fig.width= 14, fig.height=8}
 LH_FFmsy <- readRDS("files/LH_FFmsy.rds")
 
+LH_FFmsy[which(LH_FFmsy$Method == "LIME"),]$Relative_error <- 0
+
 Plot.LH_FFmsy <- ggplot(LH_FFmsy, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "F/Fmsy", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -83,7 +97,6 @@ Plot.LH_FFmsy <- ggplot(LH_FFmsy, aes(x = Method, y = Relative_error, fill = Met
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.LH_FFmsy
 
 
 LH_FFmsy.err <- readRDS("files/LH_FFmsy_err.rds")
@@ -129,15 +142,20 @@ Plot.LH_FFmsy1 <- grid.arrange(Plot.LH_FFmsy, tbl,
 
 # ggsave("Plot_FFmsyTRUE_LH.png", plot = Plot_FFmsyTrue_LH,
 #        scale = 1, width = 14, height = 7, units = "in")
+```
 
 
 
 
-## FM ####
+
+### FM 
+```{r, fig.width=14, fig.height=8}
 LH_FM <- readRDS("files/LH_FM.rds")
 
+LH_FM[which(LH_FM$Method == "LIME"),]$Relative_error <- 0
+
 Plot.LH_FM <- ggplot(LH_FM, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "Fishing mortality", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -145,7 +163,6 @@ Plot.LH_FM <- ggplot(LH_FM, aes(x = Method, y = Relative_error, fill = Method)) 
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.LH_FM
 
 
 LH_FM.err <- readRDS("files/LH_FM_err.rds")
@@ -191,17 +208,23 @@ Plot.LH_FM1 <- grid.arrange(Plot.LH_FM, tbl,
 
 # ggsave("Plot_FMTRUE_LH.png", plot = Plot_FMTrue_LH,
 #        scale = 1, width = 14, height = 7, units = "in")
+```
 
 
 
 
 
 
-## Fmsy ####
+
+
+### Fmsy 
+```{r, fig.width=14, fig.height=8}
 LH_Fmsy <- readRDS("files/LH_Fmsy.rds")
 
+LH_Fmsy[which(LH_Fmsy$Method == "LIME"),]$Relative_error <- 0
+
 Plot.LH_Fmsy <- ggplot(LH_Fmsy, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "Fmsy", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -209,7 +232,6 @@ Plot.LH_Fmsy <- ggplot(LH_Fmsy, aes(x = Method, y = Relative_error, fill = Metho
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.LH_Fmsy
 
 
 LH_Fmsy.err <- readRDS("files/LH_Fmsy_err.rds")
@@ -256,15 +278,20 @@ Plot.LH_Fmsy1 <- grid.arrange(Plot.LH_Fmsy, tbl,
 # ggsave("Plot_FmsyTRUE_LH.png", plot = Plot_FmsyTrue_LH,
 #        scale = 1, width = 14, height = 7, units = "in")
 
+```
 
 
 
 
-## SPRmsy ####
+
+### SPRmsy 
+```{r, fig.width=14, fig.height=8}
 LH_SPRmsy <- readRDS("files/LH_SPRmsy.rds")
 
+LH_SPRmsy[which(LH_SPRmsy$Method == "LIME"),]$Relative_error <- 0
+
 Plot.LH_SPRmsy <- ggplot(LH_SPRmsy, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "SPRmsy", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -272,7 +299,6 @@ Plot.LH_SPRmsy <- ggplot(LH_SPRmsy, aes(x = Method, y = Relative_error, fill = M
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.LH_SPRmsy
 
 
 LH_SPRmsy.err <- readRDS("files/LH_SPRmsy_err.rds")
@@ -319,17 +345,20 @@ Plot.LH_SPRmsy1 <- grid.arrange(Plot.LH_SPRmsy, tbl,
 # ggsave("Plot_SPRmsyTRUE_LH.png", plot = Plot_SPRmsyTrue_LH,
 #        scale = 1, width = 14, height = 7, units = "in")
 
+```
 
 
 
 
-# Exp comparison ----------------------------------------------------------
 
 
+## Exp comparison
+### SPR
+```{r, fig.width=14, fig.height=8}
 Exp_SPR <- readRDS("files/Exp_SPR.rds")
 
 Plot.Exp_SPR <- ggplot(Exp_SPR, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "Spawning Potential Ratio", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -337,7 +366,6 @@ Plot.Exp_SPR <- ggplot(Exp_SPR, aes(x = Method, y = Relative_error, fill = Metho
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.Exp_SPR
 
 
 Exp_SPR.err <- readRDS("files/Exp_SPR_err.rds")
@@ -383,80 +411,19 @@ Plot.Exp_SPR1 <- grid.arrange(Plot.Exp_SPR, tbl,
 
 # ggsave("Plot_SPRTRUE_Exp.png", plot = Plot_SPRTrue_Exp,
 #        scale = 1, width = 14, height = 7, units = "in")
+```
 
 
 
 
 
 
-
-## SPR ####
-Exp_SPR <- readRDS("files/Exp_SPR.rds")
-
-Plot.Exp_SPR <- ggplot(Exp_SPR, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
-  labs(title = "Spawning Potential Ratio", y = "Relative Error") +
-  stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
-  geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
-  facet_wrap(~ Scenario, ncol = 3, scale = "fixed") +
-  theme_classic() +
-  theme(strip.text.x = element_text(size = 20, colour = "black")) +
-  theme(axis.text.y = element_text(size = 20))
-Plot.Exp_SPR
-
-
-Exp_SPR.err <- readRDS("files/Exp_SPR_err.rds")
-
-tab <- data.frame(
-  TB = round(Exp_SPR.err$TB[1, c(1:2)],4),
-  LBSPR = round(Exp_SPR.err$LBSPR[1, c(1:2)],4),
-  LIME = round(Exp_SPR.err$LIME[1, c(1:2)],4),
-  LBRA = round(Exp_SPR.err$LBRA[1, c(1:2)],4),
-  TB = round(Exp_SPR.err$TB[2, c(1:2)],4),
-  LBSPR = round(Exp_SPR.err$LBSPR[2, c(1:2)],4),
-  LIME = round(Exp_SPR.err$LIME[2, c(1:2)],4),
-  LBRA = round(Exp_SPR.err$LBRA[2, c(1:2)],4),
-  TB = round(Exp_SPR.err$TB[3, c(1:2)],4),
-  LBSPR = round(Exp_SPR.err$LBSPR[3, c(1:2)],4),
-  LIME = round(Exp_SPR.err$LIME[3, c(1:2)],4),
-  LBRA = round(Exp_SPR.err$LBRA[3, c(1:2)],4)
-)
-
-colnames(tab) <- c(expression(TB[Target[),
-                   expression(LBSPR[Target[),
-                   expression(LIME[Target[),
-                   expression(LBRA[Target[),
-                   expression(TB[Unex]),
-                   expression(LBSPR[Unex]),
-                   expression(LIME[Unex]),
-                   expression(LBRA[Unex]),
-                   expression(TB[Ovex]),
-                   expression(LBSPR[Ovex]),
-                   expression(LIME[Ovex]),
-                   expression(LBRA[Ovex]))
-rownames(tab) <- c("MRE", "MARE")
-
-
-tt <- ttheme_default(coExpead=list(fg_params = list(parse=TRUE)))
-tbl <- tableGrob(tab, theme=tt)
-
-
-Plot.Exp_SPR1 <- grid.arrange(Plot.Exp_SPR, tbl,
-                             nrow = 2,
-                             as.table = TRUE,
-                             heights = c(3,1))
-
-# ggsave("Plot_SPRTRUE_Exp.png", plot = Plot_SPRTrue_Exp,
-#        scale = 1, width = 14, height = 7, units = "in")
-
-
-
-
-## FFmsy ####
+### FFmsy 
+```{r, fig.width=14, fig.height=8}
 Exp_FFmsy <- readRDS("files/Exp_FFmsy.rds")
 
 Plot.Exp_FFmsy <- ggplot(Exp_FFmsy, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "F/Fmsy", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -464,8 +431,6 @@ Plot.Exp_FFmsy <- ggplot(Exp_FFmsy, aes(x = Method, y = Relative_error, fill = M
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.Exp_FFmsy
-
 
 Exp_FFmsy.err <- readRDS("files/Exp_FFmsy_err.rds")
 
@@ -484,10 +449,10 @@ tab <- data.frame(
   LBRA = round(Exp_FFmsy.err$LBRA[3, c(1:2)],4)
 )
 
-colnames(tab) <- c(expression(TB[Target[),
-                   expression(LBSPR[Target[),
-                   expression(LIME[Target[),
-                   expression(LBRA[Target[),
+colnames(tab) <- c(expression(TB[Target]),
+                   expression(LBSPR[Target]),
+                   expression(LIME[Target]),
+                   expression(LBRA[Target]),
                    expression(TB[Unex]),
                    expression(LBSPR[Unex]),
                    expression(LIME[Unex]),
@@ -511,14 +476,17 @@ Plot.Exp_FFmsy1 <- grid.arrange(Plot.Exp_FFmsy, tbl,
 # ggsave("Plot_FFmsyTRUE_Exp.png", plot = Plot_FFmsyTrue_Exp,
 #        scale = 1, width = 14, height = 7, units = "in")
 
+```
 
 
 
-## FM ####
+
+### FM 
+```{r, fig.width=14, fig.height=8}
 Exp_FM <- readRDS("files/Exp_FM.rds")
 
 Plot.Exp_FM <- ggplot(Exp_FM, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "Fishing mortality", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -526,7 +494,6 @@ Plot.Exp_FM <- ggplot(Exp_FM, aes(x = Method, y = Relative_error, fill = Method)
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.Exp_FM
 
 
 Exp_FM.err <- readRDS("files/Exp_FM_err.rds")
@@ -546,10 +513,10 @@ tab <- data.frame(
   LBRA = round(Exp_FM.err$LBRA[3, c(1:2)],4)
 )
 
-colnames(tab) <- c(expression(TB[Target[),
-                   expression(LBSPR[Target[),
-                   expression(LIME[Target[),
-                   expression(LBRA[Target[),
+colnames(tab) <- c(expression(TB[Target]),
+                   expression(LBSPR[Target]),
+                   expression(LIME[Target]),
+                   expression(LBRA[Target]),
                    expression(TB[Unex]),
                    expression(LBSPR[Unex]),
                    expression(LIME[Unex]),
@@ -573,16 +540,20 @@ Plot.Exp_FM1 <- grid.arrange(Plot.Exp_FM, tbl,
 # ggsave("Plot_FMTRUE_Exp.png", plot = Plot_FMTrue_Exp,
 #        scale = 1, width = 14, height = 7, units = "in")
 
+```
 
 
 
 
 
-## Fmsy ####
+
+
+### Fmsy 
+```{r, fig.width=14, fig.height=8}
 Exp_Fmsy <- readRDS("files/Exp_Fmsy.rds")
 
 Plot.Exp_Fmsy <- ggplot(Exp_Fmsy, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "Fmsy", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -590,7 +561,6 @@ Plot.Exp_Fmsy <- ggplot(Exp_Fmsy, aes(x = Method, y = Relative_error, fill = Met
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.Exp_Fmsy
 
 
 Exp_Fmsy.err <- readRDS("files/Exp_Fmsy_err.rds")
@@ -610,10 +580,10 @@ tab <- data.frame(
   LBRA = round(Exp_Fmsy.err$LBRA[3, c(1:2)],4)
 )
 
-colnames(tab) <- c(expression(TB[Target[),
-                   expression(LBSPR[Target[),
-                   expression(LIME[Target[),
-                   expression(LBRA[Target[),
+colnames(tab) <- c(expression(TB[Target]),
+                   expression(LBSPR[Target]),
+                   expression(LIME[Target]),
+                   expression(LBRA[Target]),
                    expression(TB[Unex]),
                    expression(LBSPR[Unex]),
                    expression(LIME[Unex]),
@@ -637,15 +607,19 @@ Plot.Exp_Fmsy1 <- grid.arrange(Plot.Exp_Fmsy, tbl,
 # ggsave("Plot_FmsyTRUE_Exp.png", plot = Plot_FmsyTrue_Exp,
 #        scale = 1, width = 14, height = 7, units = "in")
 
+```
 
 
 
 
-## SPRmsy ####
+
+
+### SPRmsy 
+```{r, fig.width=14, fig.height=8}
 Exp_SPRmsy <- readRDS("files/Exp_SPRmsy.rds")
 
 Plot.Exp_SPRmsy <- ggplot(Exp_SPRmsy, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "SPRmsy", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -653,7 +627,6 @@ Plot.Exp_SPRmsy <- ggplot(Exp_SPRmsy, aes(x = Method, y = Relative_error, fill =
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.Exp_SPRmsy
 
 
 Exp_SPRmsy.err <- readRDS("files/Exp_SPRmsy_err.rds")
@@ -673,10 +646,10 @@ tab <- data.frame(
   LBRA = round(Exp_SPRmsy.err$LBRA[3, c(1:2)],4)
 )
 
-colnames(tab) <- c(expression(TB[Target[),
-                   expression(LBSPR[Target[),
-                   expression(LIME[Target[),
-                   expression(LBRA[Target[),
+colnames(tab) <- c(expression(TB[Target]),
+                   expression(LBSPR[Target]),
+                   expression(LIME[Target]),
+                   expression(LBRA[Target]),
                    expression(TB[Unex]),
                    expression(LBSPR[Unex]),
                    expression(LIME[Unex]),
@@ -699,20 +672,21 @@ Plot.Exp_SPRmsy1 <- grid.arrange(Plot.Exp_SPRmsy, tbl,
 
 # ggsave("Plot_SPRmsyTRUE_Exp.png", plot = Plot_SPRmsyTrue_Exp,
 #        scale = 1, width = 14, height = 7, units = "in")
+```
 
 
 
 
 
-# Rec comparison ----------------------------------------------------------
 
 
-
-## SPR ####
+## Rec comparison
+### SPR 
+```{r, fig.width=14, fig.height=8}
 Rec_SPR <- readRDS("files/Rec_SPR.rds")
 
 Plot.Rec_SPR <- ggplot(Rec_SPR, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "Spawning Potential Ratio", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -720,7 +694,6 @@ Plot.Rec_SPR <- ggplot(Rec_SPR, aes(x = Method, y = Relative_error, fill = Metho
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.Rec_SPR
 
 
 Rec_SPR.err <- readRDS("files/Rec_SPR_err.rds")
@@ -744,10 +717,10 @@ colnames(tab) <- c(expression(TB[None]),
                    expression(LBSPR[None]),
                    expression(LIME[None]),
                    expression(LBRA[None]),
-                   expression(TB[Error]),
-                   expression(LBSPR[Error]),
-                   expression(LIME[Error]),
-                   expression(LBRA[Error]),
+                   expression(TB[Stochastic]),
+                   expression(LBSPR[Stochastic]),
+                   expression(LIME[Stochastic]),
+                   expression(LBRA[Stochastic]),
                    expression(TB[AR]),
                    expression(LBSPR[AR]),
                    expression(LIME[AR]),
@@ -768,13 +741,17 @@ Plot.Rec_SPR1 <- grid.arrange(Plot.Rec_SPR, tbl,
 #        scale = 1, width = 14, height = 7, units = "in")
 
 
+```
 
 
-## FFmsy ####
+
+
+### FFmsy 
+```{r, fig.width=14, fig.height=8}
 Rec_FFmsy <- readRDS("files/Rec_FFmsy.rds")
 
 Plot.Rec_FFmsy <- ggplot(Rec_FFmsy, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "F/Fmsy", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -782,7 +759,6 @@ Plot.Rec_FFmsy <- ggplot(Rec_FFmsy, aes(x = Method, y = Relative_error, fill = M
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.Rec_FFmsy
 
 
 Rec_FFmsy.err <- readRDS("files/Rec_FFmsy_err.rds")
@@ -806,10 +782,10 @@ colnames(tab) <- c(expression(TB[None]),
                    expression(LBSPR[None]),
                    expression(LIME[None]),
                    expression(LBRA[None]),
-                   expression(TB[Error]),
-                   expression(LBSPR[Error]),
-                   expression(LIME[Error]),
-                   expression(LBRA[Error]),
+                   expression(TB[Stochastic]),
+                   expression(LBSPR[Stochastic]),
+                   expression(LIME[Stochastic]),
+                   expression(LBRA[Stochastic]),
                    expression(TB[AR]),
                    expression(LBSPR[AR]),
                    expression(LIME[AR]),
@@ -829,14 +805,17 @@ Plot.Rec_FFmsy1 <- grid.arrange(Plot.Rec_FFmsy, tbl,
 # ggsave("Plot_FFmsyTRUE_Rec.png", plot = Plot_FFmsyTrue_Rec,
 #        scale = 1, width = 14, height = 7, units = "in")
 
+```
 
 
 
-## FM ####
+
+### FM
+```{r, fig.width=14, fig.height=8}
 Rec_FM <- readRDS("files/Rec_FM.rds")
 
 Plot.Rec_FM <- ggplot(Rec_FM, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "Fishing mortality", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -844,7 +823,6 @@ Plot.Rec_FM <- ggplot(Rec_FM, aes(x = Method, y = Relative_error, fill = Method)
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.Rec_FM
 
 
 Rec_FM.err <- readRDS("files/Rec_FM_err.rds")
@@ -868,10 +846,10 @@ colnames(tab) <- c(expression(TB[None]),
                    expression(LBSPR[None]),
                    expression(LIME[None]),
                    expression(LBRA[None]),
-                   expression(TB[Error]),
-                   expression(LBSPR[Error]),
-                   expression(LIME[Error]),
-                   expression(LBRA[Error]),
+                   expression(TB[Stochastic]),
+                   expression(LBSPR[Stochastic]),
+                   expression(LIME[Stochastic]),
+                   expression(LBRA[Stochastic]),
                    expression(TB[AR]),
                    expression(LBSPR[AR]),
                    expression(LIME[AR]),
@@ -891,16 +869,20 @@ Plot.Rec_FM1 <- grid.arrange(Plot.Rec_FM, tbl,
 # ggsave("Plot_FMTRUE_Rec.png", plot = Plot_FMTrue_Rec,
 #        scale = 1, width = 14, height = 7, units = "in")
 
+```
 
 
 
 
 
-## Fmsy ####
+
+
+### Fmsy
+```{r, fig.width=14, fig.height=8}
 Rec_Fmsy <- readRDS("files/Rec_Fmsy.rds")
 
 Plot.Rec_Fmsy <- ggplot(Rec_Fmsy, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "Fmsy", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -908,7 +890,6 @@ Plot.Rec_Fmsy <- ggplot(Rec_Fmsy, aes(x = Method, y = Relative_error, fill = Met
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.Rec_Fmsy
 
 
 Rec_Fmsy.err <- readRDS("files/Rec_Fmsy_err.rds")
@@ -932,10 +913,10 @@ colnames(tab) <- c(expression(TB[None]),
                    expression(LBSPR[None]),
                    expression(LIME[None]),
                    expression(LBRA[None]),
-                   expression(TB[Error]),
-                   expression(LBSPR[Error]),
-                   expression(LIME[Error]),
-                   expression(LBRA[Error]),
+                   expression(TB[Stochastic]),
+                   expression(LBSPR[Stochastic]),
+                   expression(LIME[Stochastic]),
+                   expression(LBRA[Stochastic]),
                    expression(TB[AR]),
                    expression(LBSPR[AR]),
                    expression(LIME[AR]),
@@ -954,16 +935,20 @@ Plot.Rec_Fmsy1 <- grid.arrange(Plot.Rec_Fmsy, tbl,
 
 # ggsave("Plot_FmsyTRUE_Rec.png", plot = Plot_FmsyTrue_Rec,
 #        scale = 1, width = 14, height = 7, units = "in")
+```
 
 
 
 
 
-## SPRmsy ####
+
+
+### SPRmsy
+```{r, fig.width=14, fig.height=8}
 Rec_SPRmsy <- readRDS("files/Rec_SPRmsy.rds")
 
 Plot.Rec_SPRmsy <- ggplot(Rec_SPRmsy, aes(x = Method, y = Relative_error, fill = Method)) +
-  geom_violin(trim = F) +
+  geom_violin(trim = T) +
   labs(title = "SPRmsy", y = "Relative Error") +
   stat_summary(fun.y = median, geom = "point", size = 2, color = "black") +
   geom_hline(yintercept = 0, color = 'darkgrey', size = 1) +
@@ -971,7 +956,6 @@ Plot.Rec_SPRmsy <- ggplot(Rec_SPRmsy, aes(x = Method, y = Relative_error, fill =
   theme_classic() +
   theme(strip.text.x = element_text(size = 20, colour = "black")) +
   theme(axis.text.y = element_text(size = 20))
-Plot.Rec_SPRmsy
 
 
 Rec_SPRmsy.err <- readRDS("files/Rec_SPRmsy_err.rds")
@@ -995,10 +979,10 @@ colnames(tab) <- c(expression(TB[None]),
                    expression(LBSPR[None]),
                    expression(LIME[None]),
                    expression(LBRA[None]),
-                   expression(TB[Error]),
-                   expression(LBSPR[Error]),
-                   expression(LIME[Error]),
-                   expression(LBRA[Error]),
+                   expression(TB[Stochastic]),
+                   expression(LBSPR[Stochastic]),
+                   expression(LIME[Stochastic]),
+                   expression(LBRA[Stochastic]),
                    expression(TB[AR]),
                    expression(LBSPR[AR]),
                    expression(LIME[AR]),
@@ -1018,6 +1002,356 @@ Plot.Rec_SPRmsy1 <- grid.arrange(Plot.Rec_SPRmsy, tbl,
 # ggsave("Plot_SPRmsyTRUE_Rec.png", plot = Plot_SPRmsyTrue_Rec,
 #        scale = 1, width = 14, height = 7, units = "in")
 
+```
 
 
 
+## Tables
+### SPR
+```{r}
+tab <- matrix(nrow = 8, ncol = 9)
+colnames(tab) <- c("Base", "Short", "Long", "Targ", "Unex", "Ovex", "None", "Stochastic", "AR")
+rownames(tab) <- c("TB MRE", "LBSPR MRE", "LIME MRE", "LBRA MRE", "TB MARE", "LBSPR MARE", "LIME MARE", "LBRA MARE")
+tab["TB MRE","Base"] <- LH_SPR.err$TB["Med","MRE"]
+tab["TB MARE","Base"] <- LH_SPR.err$TB["Med","MARE"]
+tab["TB MRE","Short"] <- LH_SPR.err$TB["Short","MRE"]
+tab["TB MARE","Short"] <- LH_SPR.err$TB["Short","MARE"]
+tab["TB MRE","Long"] <- LH_SPR.err$TB["Long","MRE"]
+tab["TB MARE","Long"] <- LH_SPR.err$TB["Long","MARE"]
+tab["TB MRE","Targ"] <- Exp_SPR.err$TB["Targ","MRE"]
+tab["TB MARE","Targ"] <- Exp_SPR.err$TB["Targ","MARE"]
+tab["TB MRE","Unex"] <- Exp_SPR.err$TB["Unex","MRE"]
+tab["TB MARE","Unex"] <- Exp_SPR.err$TB["Unex","MARE"]
+tab["TB MRE","Ovex"] <- Exp_SPR.err$TB["Ovex","MRE"]
+tab["TB MARE","Ovex"] <- Exp_SPR.err$TB["Ovex","MARE"]
+tab["TB MRE","None"] <- Rec_SPR.err$TB["None","MRE"]
+tab["TB MARE","None"] <- Rec_SPR.err$TB["None","MARE"]
+tab["TB MRE","Stochastic"] <- Rec_SPR.err$TB["Error","MRE"]
+tab["TB MARE","Stochastic"] <- Rec_SPR.err$TB["Error","MARE"]
+tab["TB MRE","AR"] <- Rec_SPR.err$TB["AR","MRE"]
+tab["TB MARE","AR"] <- Rec_SPR.err$TB["AR","MARE"]
+
+tab["LBSPR MRE","Base"] <- LH_SPR.err$LBSPR["Med","MRE"]
+tab["LBSPR MARE","Base"] <- LH_SPR.err$LBSPR["Med","MARE"]
+tab["LBSPR MRE","Short"] <- LH_SPR.err$LBSPR["Short","MRE"]
+tab["LBSPR MARE","Short"] <- LH_SPR.err$LBSPR["Short","MARE"]
+tab["LBSPR MRE","Long"] <- LH_SPR.err$LBSPR["Long","MRE"]
+tab["LBSPR MARE","Long"] <- LH_SPR.err$LBSPR["Long","MARE"]
+tab["LBSPR MRE","Targ"] <- Exp_SPR.err$LBSPR["Targ","MRE"]
+tab["LBSPR MARE","Targ"] <- Exp_SPR.err$LBSPR["Targ","MARE"]
+tab["LBSPR MRE","Unex"] <- Exp_SPR.err$LBSPR["Unex","MRE"]
+tab["LBSPR MARE","Unex"] <- Exp_SPR.err$LBSPR["Unex","MARE"]
+tab["LBSPR MRE","Ovex"] <- Exp_SPR.err$LBSPR["Ovex","MRE"]
+tab["LBSPR MARE","Ovex"] <- Exp_SPR.err$LBSPR["Ovex","MARE"]
+tab["LBSPR MRE","None"] <- Rec_SPR.err$LBSPR["None","MRE"]
+tab["LBSPR MARE","None"] <- Rec_SPR.err$LBSPR["None","MARE"]
+tab["LBSPR MRE","Stochastic"] <- Rec_SPR.err$LBSPR["Error","MRE"]
+tab["LBSPR MARE","Stochastic"] <- Rec_SPR.err$LBSPR["Error","MARE"]
+tab["LBSPR MRE","AR"] <- Rec_SPR.err$LBSPR["AR","MRE"]
+tab["LBSPR MARE","AR"] <- Rec_SPR.err$LBSPR["AR","MARE"]
+
+tab["LIME MRE","Base"] <- LH_SPR.err$LIME["Med","MRE"]
+tab["LIME MARE","Base"] <- LH_SPR.err$LIME["Med","MARE"]
+tab["LIME MRE","Short"] <- LH_SPR.err$LIME["Short","MRE"]
+tab["LIME MARE","Short"] <- LH_SPR.err$LIME["Short","MARE"]
+tab["LIME MRE","Long"] <- LH_SPR.err$LIME["Long","MRE"]
+tab["LIME MARE","Long"] <- LH_SPR.err$LIME["Long","MARE"]
+tab["LIME MRE","Targ"] <- Exp_SPR.err$LIME["Targ","MRE"]
+tab["LIME MARE","Targ"] <- Exp_SPR.err$LIME["Targ","MARE"]
+tab["LIME MRE","Unex"] <- Exp_SPR.err$LIME["Unex","MRE"]
+tab["LIME MARE","Unex"] <- Exp_SPR.err$LIME["Unex","MARE"]
+tab["LIME MRE","Ovex"] <- Exp_SPR.err$LIME["Ovex","MRE"]
+tab["LIME MARE","Ovex"] <- Exp_SPR.err$LIME["Ovex","MARE"]
+tab["LIME MRE","None"] <- Rec_SPR.err$LIME["None","MRE"]
+tab["LIME MARE","None"] <- Rec_SPR.err$LIME["None","MARE"]
+tab["LIME MRE","Stochastic"] <- Rec_SPR.err$LIME["Error","MRE"]
+tab["LIME MARE","Stochastic"] <- Rec_SPR.err$LIME["Error","MARE"]
+tab["LIME MRE","AR"] <- Rec_SPR.err$LIME["AR","MRE"]
+tab["LIME MARE","AR"] <- Rec_SPR.err$LIME["AR","MARE"]
+
+tab["LBRA MRE","Base"] <- LH_SPR.err$LBRA["Med","MRE"]
+tab["LBRA MARE","Base"] <- LH_SPR.err$LBRA["Med","MARE"]
+tab["LBRA MRE","Short"] <- LH_SPR.err$LBRA["Short","MRE"]
+tab["LBRA MARE","Short"] <- LH_SPR.err$LBRA["Short","MARE"]
+tab["LBRA MRE","Long"] <- LH_SPR.err$LBRA["Long","MRE"]
+tab["LBRA MARE","Long"] <- LH_SPR.err$LBRA["Long","MARE"]
+tab["LBRA MRE","Targ"] <- Exp_SPR.err$LBRA["Targ","MRE"]
+tab["LBRA MARE","Targ"] <- Exp_SPR.err$LBRA["Targ","MARE"]
+tab["LBRA MRE","Unex"] <- Exp_SPR.err$LBRA["Unex","MRE"]
+tab["LBRA MARE","Unex"] <- Exp_SPR.err$LBRA["Unex","MARE"]
+tab["LBRA MRE","Ovex"] <- Exp_SPR.err$LBRA["Ovex","MRE"]
+tab["LBRA MARE","Ovex"] <- Exp_SPR.err$LBRA["Ovex","MARE"]
+tab["LBRA MRE","None"] <- Rec_SPR.err$LBRA["None","MRE"]
+tab["LBRA MARE","None"] <- Rec_SPR.err$LBRA["None","MARE"]
+tab["LBRA MRE","Stochastic"] <- Rec_SPR.err$LBRA["Error","MRE"]
+tab["LBRA MARE","Stochastic"] <- Rec_SPR.err$LBRA["Error","MARE"]
+tab["LBRA MRE","AR"] <- Rec_SPR.err$LBRA["AR","MRE"]
+tab["LBRA MARE","AR"] <- Rec_SPR.err$LBRA["AR","MARE"]
+
+tab <- round(tab,4)
+knitr::kable(tab)
+```
+
+
+
+### FFmsy
+```{r}
+tab <- matrix(nrow = 8, ncol = 9)
+colnames(tab) <- c("Base", "Short", "Long", "Targ", "Unex", "Ovex", "None", "Stochastic", "AR")
+rownames(tab) <- c("TB MRE", "LBSPR MRE", "LIME MRE", "LBRA MRE", "TB MARE", "LBSPR MARE", "LIME MARE", "LBRA MARE")
+tab["TB MRE","Base"] <- LH_FFmsy.err$TB["Med","MRE"]
+tab["TB MARE","Base"] <- LH_FFmsy.err$TB["Med","MARE"]
+tab["TB MRE","Short"] <- LH_FFmsy.err$TB["Short","MRE"]
+tab["TB MARE","Short"] <- LH_FFmsy.err$TB["Short","MARE"]
+tab["TB MRE","Long"] <- LH_FFmsy.err$TB["Long","MRE"]
+tab["TB MARE","Long"] <- LH_FFmsy.err$TB["Long","MARE"]
+tab["TB MRE","Targ"] <- Exp_FFmsy.err$TB["Targ","MRE"]
+tab["TB MARE","Targ"] <- Exp_FFmsy.err$TB["Targ","MARE"]
+tab["TB MRE","Unex"] <- Exp_FFmsy.err$TB["Unex","MRE"]
+tab["TB MARE","Unex"] <- Exp_FFmsy.err$TB["Unex","MARE"]
+tab["TB MRE","Ovex"] <- Exp_FFmsy.err$TB["Ovex","MRE"]
+tab["TB MARE","Ovex"] <- Exp_FFmsy.err$TB["Ovex","MARE"]
+tab["TB MRE","None"] <- Rec_FFmsy.err$TB["None","MRE"]
+tab["TB MARE","None"] <- Rec_FFmsy.err$TB["None","MARE"]
+tab["TB MRE","Stochastic"] <- Rec_FFmsy.err$TB["Error","MRE"]
+tab["TB MARE","Stochastic"] <- Rec_FFmsy.err$TB["Error","MARE"]
+tab["TB MRE","AR"] <- Rec_FFmsy.err$TB["AR","MRE"]
+tab["TB MARE","AR"] <- Rec_FFmsy.err$TB["AR","MARE"]
+
+tab["LBSPR MRE","Base"] <- LH_FFmsy.err$LBSPR["Med","MRE"]
+tab["LBSPR MARE","Base"] <- LH_FFmsy.err$LBSPR["Med","MARE"]
+tab["LBSPR MRE","Short"] <- LH_FFmsy.err$LBSPR["Short","MRE"]
+tab["LBSPR MARE","Short"] <- LH_FFmsy.err$LBSPR["Short","MARE"]
+tab["LBSPR MRE","Long"] <- LH_FFmsy.err$LBSPR["Long","MRE"]
+tab["LBSPR MARE","Long"] <- LH_FFmsy.err$LBSPR["Long","MARE"]
+tab["LBSPR MRE","Targ"] <- Exp_FFmsy.err$LBSPR["Targ","MRE"]
+tab["LBSPR MARE","Targ"] <- Exp_FFmsy.err$LBSPR["Targ","MARE"]
+tab["LBSPR MRE","Unex"] <- Exp_FFmsy.err$LBSPR["Unex","MRE"]
+tab["LBSPR MARE","Unex"] <- Exp_FFmsy.err$LBSPR["Unex","MARE"]
+tab["LBSPR MRE","Ovex"] <- Exp_FFmsy.err$LBSPR["Ovex","MRE"]
+tab["LBSPR MARE","Ovex"] <- Exp_FFmsy.err$LBSPR["Ovex","MARE"]
+tab["LBSPR MRE","None"] <- Rec_FFmsy.err$LBSPR["None","MRE"]
+tab["LBSPR MARE","None"] <- Rec_FFmsy.err$LBSPR["None","MARE"]
+tab["LBSPR MRE","Stochastic"] <- Rec_FFmsy.err$LBSPR["Error","MRE"]
+tab["LBSPR MARE","Stochastic"] <- Rec_FFmsy.err$LBSPR["Error","MARE"]
+tab["LBSPR MRE","AR"] <- Rec_FFmsy.err$LBSPR["AR","MRE"]
+tab["LBSPR MARE","AR"] <- Rec_FFmsy.err$LBSPR["AR","MARE"]
+
+tab["LIME MRE","Base"] <- LH_FFmsy.err$LIME["Med","MRE"]
+tab["LIME MARE","Base"] <- LH_FFmsy.err$LIME["Med","MARE"]
+tab["LIME MRE","Short"] <- LH_FFmsy.err$LIME["Short","MRE"]
+tab["LIME MARE","Short"] <- LH_FFmsy.err$LIME["Short","MARE"]
+tab["LIME MRE","Long"] <- LH_FFmsy.err$LIME["Long","MRE"]
+tab["LIME MARE","Long"] <- LH_FFmsy.err$LIME["Long","MARE"]
+tab["LIME MRE","Targ"] <- Exp_FFmsy.err$LIME["Targ","MRE"]
+tab["LIME MARE","Targ"] <- Exp_FFmsy.err$LIME["Targ","MARE"]
+tab["LIME MRE","Unex"] <- Exp_FFmsy.err$LIME["Unex","MRE"]
+tab["LIME MARE","Unex"] <- Exp_FFmsy.err$LIME["Unex","MARE"]
+tab["LIME MRE","Ovex"] <- Exp_FFmsy.err$LIME["Ovex","MRE"]
+tab["LIME MARE","Ovex"] <- Exp_FFmsy.err$LIME["Ovex","MARE"]
+tab["LIME MRE","None"] <- Rec_FFmsy.err$LIME["None","MRE"]
+tab["LIME MARE","None"] <- Rec_FFmsy.err$LIME["None","MARE"]
+tab["LIME MRE","Stochastic"] <- Rec_FFmsy.err$LIME["Error","MRE"]
+tab["LIME MARE","Stochastic"] <- Rec_FFmsy.err$LIME["Error","MARE"]
+tab["LIME MRE","AR"] <- Rec_FFmsy.err$LIME["AR","MRE"]
+tab["LIME MARE","AR"] <- Rec_FFmsy.err$LIME["AR","MARE"]
+
+tab["LBRA MRE","Base"] <- LH_FFmsy.err$LBRA["Med","MRE"]
+tab["LBRA MARE","Base"] <- LH_FFmsy.err$LBRA["Med","MARE"]
+tab["LBRA MRE","Short"] <- LH_FFmsy.err$LBRA["Short","MRE"]
+tab["LBRA MARE","Short"] <- LH_FFmsy.err$LBRA["Short","MARE"]
+tab["LBRA MRE","Long"] <- LH_FFmsy.err$LBRA["Long","MRE"]
+tab["LBRA MARE","Long"] <- LH_FFmsy.err$LBRA["Long","MARE"]
+tab["LBRA MRE","Targ"] <- Exp_FFmsy.err$LBRA["Targ","MRE"]
+tab["LBRA MARE","Targ"] <- Exp_FFmsy.err$LBRA["Targ","MARE"]
+tab["LBRA MRE","Unex"] <- Exp_FFmsy.err$LBRA["Unex","MRE"]
+tab["LBRA MARE","Unex"] <- Exp_FFmsy.err$LBRA["Unex","MARE"]
+tab["LBRA MRE","Ovex"] <- Exp_FFmsy.err$LBRA["Ovex","MRE"]
+tab["LBRA MARE","Ovex"] <- Exp_FFmsy.err$LBRA["Ovex","MARE"]
+tab["LBRA MRE","None"] <- Rec_FFmsy.err$LBRA["None","MRE"]
+tab["LBRA MARE","None"] <- Rec_FFmsy.err$LBRA["None","MARE"]
+tab["LBRA MRE","Stochastic"] <- Rec_FFmsy.err$LBRA["Error","MRE"]
+tab["LBRA MARE","Stochastic"] <- Rec_FFmsy.err$LBRA["Error","MARE"]
+tab["LBRA MRE","AR"] <- Rec_FFmsy.err$LBRA["AR","MRE"]
+tab["LBRA MARE","AR"] <- Rec_FFmsy.err$LBRA["AR","MARE"]
+
+tab <- round(tab,4)
+knitr::kable(tab)
+
+
+```
+
+### FM
+```{r}
+tab <- matrix(nrow = 8, ncol = 9)
+colnames(tab) <- c("Base", "Short", "Long", "Targ", "Unex", "Ovex", "None", "Stochastic", "AR")
+rownames(tab) <- c("TB MRE", "LBSPR MRE", "LIME MRE", "LBRA MRE", "TB MARE", "LBSPR MARE", "LIME MARE", "LBRA MARE")
+tab["TB MRE","Base"] <- LH_FM.err$TB["Med","MRE"]
+tab["TB MARE","Base"] <- LH_FM.err$TB["Med","MARE"]
+tab["TB MRE","Short"] <- LH_FM.err$TB["Short","MRE"]
+tab["TB MARE","Short"] <- LH_FM.err$TB["Short","MARE"]
+tab["TB MRE","Long"] <- LH_FM.err$TB["Long","MRE"]
+tab["TB MARE","Long"] <- LH_FM.err$TB["Long","MARE"]
+tab["TB MRE","Targ"] <- Exp_FM.err$TB["Targ","MRE"]
+tab["TB MARE","Targ"] <- Exp_FM.err$TB["Targ","MARE"]
+tab["TB MRE","Unex"] <- Exp_FM.err$TB["Unex","MRE"]
+tab["TB MARE","Unex"] <- Exp_FM.err$TB["Unex","MARE"]
+tab["TB MRE","Ovex"] <- Exp_FM.err$TB["Ovex","MRE"]
+tab["TB MARE","Ovex"] <- Exp_FM.err$TB["Ovex","MARE"]
+tab["TB MRE","None"] <- Rec_FM.err$TB["None","MRE"]
+tab["TB MARE","None"] <- Rec_FM.err$TB["None","MARE"]
+tab["TB MRE","Stochastic"] <- Rec_FM.err$TB["Error","MRE"]
+tab["TB MARE","Stochastic"] <- Rec_FM.err$TB["Error","MARE"]
+tab["TB MRE","AR"] <- Rec_FM.err$TB["AR","MRE"]
+tab["TB MARE","AR"] <- Rec_FM.err$TB["AR","MARE"]
+
+tab["LBSPR MRE","Base"] <- LH_FM.err$LBSPR["Med","MRE"]
+tab["LBSPR MARE","Base"] <- LH_FM.err$LBSPR["Med","MARE"]
+tab["LBSPR MRE","Short"] <- LH_FM.err$LBSPR["Short","MRE"]
+tab["LBSPR MARE","Short"] <- LH_FM.err$LBSPR["Short","MARE"]
+tab["LBSPR MRE","Long"] <- LH_FM.err$LBSPR["Long","MRE"]
+tab["LBSPR MARE","Long"] <- LH_FM.err$LBSPR["Long","MARE"]
+tab["LBSPR MRE","Targ"] <- Exp_FM.err$LBSPR["Targ","MRE"]
+tab["LBSPR MARE","Targ"] <- Exp_FM.err$LBSPR["Targ","MARE"]
+tab["LBSPR MRE","Unex"] <- Exp_FM.err$LBSPR["Unex","MRE"]
+tab["LBSPR MARE","Unex"] <- Exp_FM.err$LBSPR["Unex","MARE"]
+tab["LBSPR MRE","Ovex"] <- Exp_FM.err$LBSPR["Ovex","MRE"]
+tab["LBSPR MARE","Ovex"] <- Exp_FM.err$LBSPR["Ovex","MARE"]
+tab["LBSPR MRE","None"] <- Rec_FM.err$LBSPR["None","MRE"]
+tab["LBSPR MARE","None"] <- Rec_FM.err$LBSPR["None","MARE"]
+tab["LBSPR MRE","Stochastic"] <- Rec_FM.err$LBSPR["Error","MRE"]
+tab["LBSPR MARE","Stochastic"] <- Rec_FM.err$LBSPR["Error","MARE"]
+tab["LBSPR MRE","AR"] <- Rec_FM.err$LBSPR["AR","MRE"]
+tab["LBSPR MARE","AR"] <- Rec_FM.err$LBSPR["AR","MARE"]
+
+tab["LIME MRE","Base"] <- LH_FM.err$LIME["Med","MRE"]
+tab["LIME MARE","Base"] <- LH_FM.err$LIME["Med","MARE"]
+tab["LIME MRE","Short"] <- LH_FM.err$LIME["Short","MRE"]
+tab["LIME MARE","Short"] <- LH_FM.err$LIME["Short","MARE"]
+tab["LIME MRE","Long"] <- LH_FM.err$LIME["Long","MRE"]
+tab["LIME MARE","Long"] <- LH_FM.err$LIME["Long","MARE"]
+tab["LIME MRE","Targ"] <- Exp_FM.err$LIME["Targ","MRE"]
+tab["LIME MARE","Targ"] <- Exp_FM.err$LIME["Targ","MARE"]
+tab["LIME MRE","Unex"] <- Exp_FM.err$LIME["Unex","MRE"]
+tab["LIME MARE","Unex"] <- Exp_FM.err$LIME["Unex","MARE"]
+tab["LIME MRE","Ovex"] <- Exp_FM.err$LIME["Ovex","MRE"]
+tab["LIME MARE","Ovex"] <- Exp_FM.err$LIME["Ovex","MARE"]
+tab["LIME MRE","None"] <- Rec_FM.err$LIME["None","MRE"]
+tab["LIME MARE","None"] <- Rec_FM.err$LIME["None","MARE"]
+tab["LIME MRE","Stochastic"] <- Rec_FM.err$LIME["Error","MRE"]
+tab["LIME MARE","Stochastic"] <- Rec_FM.err$LIME["Error","MARE"]
+tab["LIME MRE","AR"] <- Rec_FM.err$LIME["AR","MRE"]
+tab["LIME MARE","AR"] <- Rec_FM.err$LIME["AR","MARE"]
+
+tab["LBRA MRE","Base"] <- LH_FM.err$LBRA["Med","MRE"]
+tab["LBRA MARE","Base"] <- LH_FM.err$LBRA["Med","MARE"]
+tab["LBRA MRE","Short"] <- LH_FM.err$LBRA["Short","MRE"]
+tab["LBRA MARE","Short"] <- LH_FM.err$LBRA["Short","MARE"]
+tab["LBRA MRE","Long"] <- LH_FM.err$LBRA["Long","MRE"]
+tab["LBRA MARE","Long"] <- LH_FM.err$LBRA["Long","MARE"]
+tab["LBRA MRE","Targ"] <- Exp_FM.err$LBRA["Targ","MRE"]
+tab["LBRA MARE","Targ"] <- Exp_FM.err$LBRA["Targ","MARE"]
+tab["LBRA MRE","Unex"] <- Exp_FM.err$LBRA["Unex","MRE"]
+tab["LBRA MARE","Unex"] <- Exp_FM.err$LBRA["Unex","MARE"]
+tab["LBRA MRE","Ovex"] <- Exp_FM.err$LBRA["Ovex","MRE"]
+tab["LBRA MARE","Ovex"] <- Exp_FM.err$LBRA["Ovex","MARE"]
+tab["LBRA MRE","None"] <- Rec_FM.err$LBRA["None","MRE"]
+tab["LBRA MARE","None"] <- Rec_FM.err$LBRA["None","MARE"]
+tab["LBRA MRE","Stochastic"] <- Rec_FM.err$LBRA["Error","MRE"]
+tab["LBRA MARE","Stochastic"] <- Rec_FM.err$LBRA["Error","MARE"]
+tab["LBRA MRE","AR"] <- Rec_FM.err$LBRA["AR","MRE"]
+tab["LBRA MARE","AR"] <- Rec_FM.err$LBRA["AR","MARE"]
+
+tab <- round(tab,4)
+knitr::kable(tab)
+
+
+```
+
+
+### Fmsy
+```{r}
+tab <- matrix(nrow = 8, ncol = 9)
+colnames(tab) <- c("Base", "Short", "Long", "Targ", "Unex", "Ovex", "None", "Stochastic", "AR")
+rownames(tab) <- c("TB MRE", "LBSPR MRE", "LIME MRE", "LBRA MRE", "TB MARE", "LBSPR MARE", "LIME MARE", "LBRA MARE")
+tab["TB MRE","Base"] <- LH_Fmsy.err$TB["Med","MRE"]
+tab["TB MARE","Base"] <- LH_Fmsy.err$TB["Med","MARE"]
+tab["TB MRE","Short"] <- LH_Fmsy.err$TB["Short","MRE"]
+tab["TB MARE","Short"] <- LH_Fmsy.err$TB["Short","MARE"]
+tab["TB MRE","Long"] <- LH_Fmsy.err$TB["Long","MRE"]
+tab["TB MARE","Long"] <- LH_Fmsy.err$TB["Long","MARE"]
+tab["TB MRE","Targ"] <- Exp_Fmsy.err$TB["Targ","MRE"]
+tab["TB MARE","Targ"] <- Exp_Fmsy.err$TB["Targ","MARE"]
+tab["TB MRE","Unex"] <- Exp_Fmsy.err$TB["Unex","MRE"]
+tab["TB MARE","Unex"] <- Exp_Fmsy.err$TB["Unex","MARE"]
+tab["TB MRE","Ovex"] <- Exp_Fmsy.err$TB["Ovex","MRE"]
+tab["TB MARE","Ovex"] <- Exp_Fmsy.err$TB["Ovex","MARE"]
+tab["TB MRE","None"] <- Rec_Fmsy.err$TB["None","MRE"]
+tab["TB MARE","None"] <- Rec_Fmsy.err$TB["None","MARE"]
+tab["TB MRE","Stochastic"] <- Rec_Fmsy.err$TB["Error","MRE"]
+tab["TB MARE","Stochastic"] <- Rec_Fmsy.err$TB["Error","MARE"]
+tab["TB MRE","AR"] <- Rec_Fmsy.err$TB["AR","MRE"]
+tab["TB MARE","AR"] <- Rec_Fmsy.err$TB["AR","MARE"]
+
+tab["LBSPR MRE","Base"] <- LH_Fmsy.err$LBSPR["Med","MRE"]
+tab["LBSPR MARE","Base"] <- LH_Fmsy.err$LBSPR["Med","MARE"]
+tab["LBSPR MRE","Short"] <- LH_Fmsy.err$LBSPR["Short","MRE"]
+tab["LBSPR MARE","Short"] <- LH_Fmsy.err$LBSPR["Short","MARE"]
+tab["LBSPR MRE","Long"] <- LH_Fmsy.err$LBSPR["Long","MRE"]
+tab["LBSPR MARE","Long"] <- LH_Fmsy.err$LBSPR["Long","MARE"]
+tab["LBSPR MRE","Targ"] <- Exp_Fmsy.err$LBSPR["Targ","MRE"]
+tab["LBSPR MARE","Targ"] <- Exp_Fmsy.err$LBSPR["Targ","MARE"]
+tab["LBSPR MRE","Unex"] <- Exp_Fmsy.err$LBSPR["Unex","MRE"]
+tab["LBSPR MARE","Unex"] <- Exp_Fmsy.err$LBSPR["Unex","MARE"]
+tab["LBSPR MRE","Ovex"] <- Exp_Fmsy.err$LBSPR["Ovex","MRE"]
+tab["LBSPR MARE","Ovex"] <- Exp_Fmsy.err$LBSPR["Ovex","MARE"]
+tab["LBSPR MRE","None"] <- Rec_Fmsy.err$LBSPR["None","MRE"]
+tab["LBSPR MARE","None"] <- Rec_Fmsy.err$LBSPR["None","MARE"]
+tab["LBSPR MRE","Stochastic"] <- Rec_Fmsy.err$LBSPR["Error","MRE"]
+tab["LBSPR MARE","Stochastic"] <- Rec_Fmsy.err$LBSPR["Error","MARE"]
+tab["LBSPR MRE","AR"] <- Rec_Fmsy.err$LBSPR["AR","MRE"]
+tab["LBSPR MARE","AR"] <- Rec_Fmsy.err$LBSPR["AR","MARE"]
+
+tab["LIME MRE","Base"] <- LH_Fmsy.err$LIME["Med","MRE"]
+tab["LIME MARE","Base"] <- LH_Fmsy.err$LIME["Med","MARE"]
+tab["LIME MRE","Short"] <- LH_Fmsy.err$LIME["Short","MRE"]
+tab["LIME MARE","Short"] <- LH_Fmsy.err$LIME["Short","MARE"]
+tab["LIME MRE","Long"] <- LH_Fmsy.err$LIME["Long","MRE"]
+tab["LIME MARE","Long"] <- LH_Fmsy.err$LIME["Long","MARE"]
+tab["LIME MRE","Targ"] <- Exp_Fmsy.err$LIME["Targ","MRE"]
+tab["LIME MARE","Targ"] <- Exp_Fmsy.err$LIME["Targ","MARE"]
+tab["LIME MRE","Unex"] <- Exp_Fmsy.err$LIME["Unex","MRE"]
+tab["LIME MARE","Unex"] <- Exp_Fmsy.err$LIME["Unex","MARE"]
+tab["LIME MRE","Ovex"] <- Exp_Fmsy.err$LIME["Ovex","MRE"]
+tab["LIME MARE","Ovex"] <- Exp_Fmsy.err$LIME["Ovex","MARE"]
+tab["LIME MRE","None"] <- Rec_Fmsy.err$LIME["None","MRE"]
+tab["LIME MARE","None"] <- Rec_Fmsy.err$LIME["None","MARE"]
+tab["LIME MRE","Stochastic"] <- Rec_Fmsy.err$LIME["Error","MRE"]
+tab["LIME MARE","Stochastic"] <- Rec_Fmsy.err$LIME["Error","MARE"]
+tab["LIME MRE","AR"] <- Rec_Fmsy.err$LIME["AR","MRE"]
+tab["LIME MARE","AR"] <- Rec_Fmsy.err$LIME["AR","MARE"]
+
+tab["LBRA MRE","Base"] <- LH_Fmsy.err$LBRA["Med","MRE"]
+tab["LBRA MARE","Base"] <- LH_Fmsy.err$LBRA["Med","MARE"]
+tab["LBRA MRE","Short"] <- LH_Fmsy.err$LBRA["Short","MRE"]
+tab["LBRA MARE","Short"] <- LH_Fmsy.err$LBRA["Short","MARE"]
+tab["LBRA MRE","Long"] <- LH_Fmsy.err$LBRA["Long","MRE"]
+tab["LBRA MARE","Long"] <- LH_Fmsy.err$LBRA["Long","MARE"]
+tab["LBRA MRE","Targ"] <- Exp_Fmsy.err$LBRA["Targ","MRE"]
+tab["LBRA MARE","Targ"] <- Exp_Fmsy.err$LBRA["Targ","MARE"]
+tab["LBRA MRE","Unex"] <- Exp_Fmsy.err$LBRA["Unex","MRE"]
+tab["LBRA MARE","Unex"] <- Exp_Fmsy.err$LBRA["Unex","MARE"]
+tab["LBRA MRE","Ovex"] <- Exp_Fmsy.err$LBRA["Ovex","MRE"]
+tab["LBRA MARE","Ovex"] <- Exp_Fmsy.err$LBRA["Ovex","MARE"]
+tab["LBRA MRE","None"] <- Rec_Fmsy.err$LBRA["None","MRE"]
+tab["LBRA MARE","None"] <- Rec_Fmsy.err$LBRA["None","MARE"]
+tab["LBRA MRE","Stochastic"] <- Rec_Fmsy.err$LBRA["Error","MRE"]
+tab["LBRA MARE","Stochastic"] <- Rec_Fmsy.err$LBRA["Error","MARE"]
+tab["LBRA MRE","AR"] <- Rec_Fmsy.err$LBRA["AR","MRE"]
+tab["LBRA MARE","AR"] <- Rec_Fmsy.err$LBRA["AR","MARE"]
+
+tab <- round(tab,4)
+knitr::kable(tab)
+
+
+```
