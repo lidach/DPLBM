@@ -104,7 +104,7 @@ Short_LIME <- readRDS("D:/DPLBM/Pub1/Shortlived/True/Shortmodel_res_LIME.rds")
 Short_TB <- readRDS("D:/DPLBM/Pub1/Shortlived/True/Shortmodel_res_TB.rds")
 
 SPRTrue <- rep(0.413567, iters)
-LIMESPR <- sapply(Short_LIME, function(x) x$Report$SPR_t)
+LIMESPR <- sapply(Short_LIME, function(x) mean(x$Report$SPR_t))
 TBSPR <- sapply(Short_TB, function(x) x$currents$curr.SPR)
 
 Short_LBRA_SPR <- calc_error(SPRTrue, Short_LBRA$SPR, iters)
