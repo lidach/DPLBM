@@ -456,7 +456,7 @@ for(i in 1:iters){
                             M = LFQARmodel1[[i]]$M,
                             binwidth = 2,
                             R0 = 1,
-                            nseasons = 1)
+                            nseasons = 12)
 }
 
 
@@ -484,29 +484,26 @@ for (i in 1:iters){
 
 #' Run LIME
 ARlived_res_LIME <- list()
-# data_all <- list()
-# 
-# for(i in 1:iters){
-#   data_all[[i]] <- create_inputs(lh = lh[[i]], input_data = data_LF[[i]])
-# }
+data_all <- list()
 
-# a <- c(which(p %in% "The model is likely not converged"))
+for(i in 1:iters){
+  data_all[[i]] <- create_inputs(lh = lh[[i]], input_data = data_LF[[i]])
+}
+
+
 for (i in 1:300){
   ARlived_res_LIME[[i]] <- run_LIME(modpath = NULL,
-                                       # input = data_all[[i]],
-                                       lh = lh[[i]],
-                                       input_data = data_LF[[i]],
-                                       est_sigma = "log_sigma_R",
-                                       data_avail = "LC"
-                                       # derive_quants = TRUE
+                                       input = data_all[[i]],
+                                       # lh = lh[[i]],
+                                       # input_data = data_LF[[i]],
+                                       # est_sigma = "log_sigma_R",
+                                       data_avail = "LC",
+                                       derive_quants = TRUE
   )
 }
 
 # calc_derived_quants(ARlived_res_LIME[[i]]$obj, lh[[i]])
 
-for(i in 1:300){
-  ARlived_res_LIME[[i]]$Derived <- ARlived_res_LIME2[[i]]$Derived
-}
 
 saveRDS(ARlived_res_LIME, file = "ARmodel_res_LIME.rds")
 

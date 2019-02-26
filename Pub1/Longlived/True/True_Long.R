@@ -470,7 +470,7 @@ for(i in 1:iters){
                             M = LFQlongmodel1[[i]]$M,
                             binwidth = 3,
                             R0 = 1,
-                            nseasons = 1)
+                            nseasons = 12)
 }
 
 
@@ -478,7 +478,7 @@ for(i in 1:iters){
 #' set up data
 for(i in 1:iters){
   LFQlongmodel1[[i]] <- lfqModify(LFQlongmodel1[[i]], bin_size = 3)
-  # LFQlongmodel1[[i]]$catch <- rowSums(LFQlongmodel1[[i]]$catch)
+  LFQlongmodel1[[i]]$catch <- rowSums(LFQlongmodel1[[i]]$catch)
   LFQlongmodel1[[i]]$catch <- as.matrix(LFQlongmodel1[[i]]$catch)
 }
 
@@ -486,33 +486,33 @@ for(i in 1:iters){
 LF <- list()
 for(i in 1:iters){
   LF[[i]] <- t(LFQlongmodel1[[i]]$catch)
-  rownames(LF[[i]]) <- as.numeric(1:12)
+  rownames(LF[[i]]) <- as.numeric(1)
   colnames(LF[[i]]) <- LFQlongmodel1[[i]]$midLengths
 }
 
 #' years with length data
 data_LF <- list()
 for (i in 1:iters){
-  data_LF[[i]] <- list("years" = 1:12, "LF" = LF[[i]])
+  data_LF[[i]] <- list("years" = 1, "LF" = LF[[i]])
 }
 
 #' Run LIME
 Longlived_res_LIME <- list()
-# data_all <- list()
-# 
-# for(i in 1:iters){
-#   data_all[[i]] <- create_inputs(lh = lh[[i]], input_data = data_LF[[i]])
-# }
+data_all <- list()
+
+for(i in 1:iters){
+  data_all[[i]] <- create_inputs(lh = lh[[i]], input_data = data_LF[[i]])
+}
 
 # a <- c(which(p %in% "The model is likely not converged"))
 for (i in 1:300){
   Longlived_res_LIME[[i]] <- run_LIME(modpath = NULL,
-                                        # input = data_all[[i]],
-                                        lh = lh[[i]],
-                                        input_data = data_LF[[i]],
-                                        est_sigma = "log_sigma_R",
-                                        data_avail = "LC"
-                                        # derive_quants = TRUE
+                                        input = data_all[[i]],
+                                        # lh = lh[[i]],
+                                        # input_data = data_LF[[i]],
+                                        # est_sigma = "log_sigma_R",
+                                        data_avail = "LC",
+                                        derive_quants = TRUE
   )
 }
 

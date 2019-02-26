@@ -488,7 +488,7 @@ for (i in 1:iters){
 }
 
 #' Run LIME
-Shortlived_res_LIME2 <- list()
+Shortlived_res_LIME <- list()
 data_all <- list()
 
 for(i in 1:iters){
@@ -497,7 +497,7 @@ for(i in 1:iters){
 
 # a <- c(which(p %in% "The model is likely not converged"))
 for (i in 1:300){
-  Shortlived_res_LIME2[[i]] <- run_LIME(modpath = NULL,
+  Shortlived_res_LIME[[i]] <- run_LIME(modpath = NULL,
                                      input = data_all[[i]],
                                      # lh = lh[[i]],
                                      # input_data = data_LF[[i]],
@@ -510,7 +510,7 @@ for (i in 1:300){
 # calc_derived_quants(Shortlived_res_LIME[[i]]$obj, lh[[i]])
 
 for(i in 1:300){
-  Shortlived_res_LIME[[i]]$Derived <- Shortlived_res_LIME2[[i]]$Derived
+  Shortlived_res_LIME[[i]]$Derived$SPR <- Shortlived_res_LIME2[[i]]$Derived$SPR
 }
 
 saveRDS(Shortlived_res_LIME, file = "Shortmodel_res_LIME.rds")

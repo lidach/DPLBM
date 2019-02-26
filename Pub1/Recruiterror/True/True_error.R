@@ -454,7 +454,7 @@ for(i in 1:iters){
                             M = LFQerrormodel1[[i]]$M,
                             binwidth = 2,
                             R0 = 1,
-                            nseasons = 1)
+                            nseasons = 12)
 }
 
 
@@ -481,22 +481,22 @@ for (i in 1:iters){
 }
 
 #' Run LIME
-Errorlived_res_LIME <- list()
-# data_all <- list()
-# 
-# for(i in 1:iters){
-#   data_all[[i]] <- create_inputs(lh = lh[[i]], input_data = data_LF[[i]])
-# }
+Errorlived_res_LIME2 <- list()
+data_all <- list()
+
+for(i in 1:iters){
+  data_all[[i]] <- create_inputs(lh = lh[[i]], input_data = data_LF[[i]])
+}
 
 # a <- c(which(p %in% "The model is likely not converged"))
 for (i in 1:300){
-  Errorlived_res_LIME[[i]] <- run_LIME(modpath = NULL,
-                                       # input = data_all[[i]],
-                                       lh = lh[[i]],
-                                       input_data = data_LF[[i]],
-                                       est_sigma = "log_sigma_R",
-                                       data_avail = "LC"
-                                       # derive_quants = TRUE
+  Errorlived_res_LIME2[[i]] <- run_LIME(modpath = NULL,
+                                       input = data_all[[i]],
+                                       # lh = lh[[i]],
+                                       # input_data = data_LF[[i]],
+                                       # est_sigma = "log_sigma_R",
+                                       data_avail = "LC",
+                                       derive_quants = TRUE
   )
 }
 
