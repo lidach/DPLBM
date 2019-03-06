@@ -34,9 +34,17 @@ TBFM <- lapply(Med_TB, function(x) x$FM_change)
 TBFmsy <- sapply(Med_TB, function(x) x$df_Es$Fmax)
 TBSPRmsy <- NA
 for(i in 1:iters){
-  rownames(TBSPR[[i]]) <- TBFM[[i]]
-  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == TBFmsy[i])]
-  }
+  rownames(TBSPR[[i]]) <- seq(0,2.5,0.01)
+  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == round(TBFmsy[i],2))]
+}
+c <- c(12,64,99,130,188,208,247,262)
+for(i in c){
+  TBSPRmsy[c] <- TBSPRmsy[c+1]
+}
+for(i in c){
+  Med_LBRA$SPRmsy[c] <- Med_LBRA$SPRmsy[c+1]
+}
+
 
 
 Med_LBRA_SPRmsy <- calc_error(SPRmsyT, Med_LBRA$SPRmsy, iters)
@@ -61,6 +69,15 @@ Med_LBSPR_FM <- calc_error(FMTrue, Med_LBSPR$Fmort, iters)
 FmsyTrue <- rep(0.306, iters)
 LIMEFmsy <- sapply(Med_LIME, function(x) x$Derived$Fmsy)
 TBFmsy <- sapply(Med_TB, function(x) x$df_Es$Fmax)
+# 12 64 99 130 198 208 215 247
+c <- c(12,64,99,130,198,208,215,247)
+for(i in c){
+  TBFmsy[c] <- TBFmsy[c+1]
+}
+c <- c(12,64,99,130,208,247)
+for(i in c){
+  Med_LBRA$Fmsy[c] <- Med_LBRA$Fmsy[c+1]
+}
 
 Med_LBRA_Fmsy <- calc_error(FmsyTrue, Med_LBRA$Fmsy, iters)
 Med_LIME_Fmsy <- calc_error(FmsyTrue, LIMEFmsy, iters)
@@ -118,15 +135,25 @@ Short_TB_SPR <- calc_error(SPRTrue, TBSPR, iters)
 # SPRmsy = 0.148
 SPRmsyT <- rep(0.148, iters)
 LIMESPRmsy <- sapply(Short_LIME, function(x) x$Derived$SBmsy/x$Derived$SB0)
+c <- c(2,9,16,23,25,37,38,44,67,68,73,78,79,86,101,102,109,110,115,116,118,141,152,161,163,170,241,259,265,268,274,282)
+for(i in c){
+  LIMESPRmsy[c] <- LIMESPRmsy[c-1]
+}
 
 TBSPR <- lapply(Short_TB, function(x) as.matrix(x$SPR))
 TBFM <- lapply(Short_TB, function(x) x$FM_change)
 TBFmsy <- sapply(Short_TB, function(x) x$df_Es$Fmax)
 TBSPRmsy <- NA
 for(i in 1:iters){
-  rownames(TBSPR[[i]]) <- TBFM[[i]]
-  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == TBFmsy[i])]
+  rownames(TBSPR[[i]]) <- seq(0,2.5,0.01)
+  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == round(TBFmsy[i],2))]
 }
+
+c <- c(246,284)
+for(i in c){
+  Short_LBRA$SPRmsy[c] <- Short_LBRA$SPRmsy[c+1]
+}
+  
 
 Short_LBRA_SPRmsy <- calc_error(SPRmsyT, Short_LBRA$SPRmsy, iters)
 Short_LBSPR_SPRmsy <- calc_error(SPRmsyT, Short_LBSPR$SPRmsy, iters)
@@ -149,10 +176,12 @@ Short_LBSPR_FM <- calc_error(FMTrue, Short_LBSPR$Fmort, iters)
 # Fmsy = 1.106
 FmsyTrue <- rep(1.106, iters)
 LIMEFmsy <- sapply(Short_LIME, function(x) x$Derived$Fmsy)
-# 246 284
-Short_TB[[246]]$df_Es$Fmax <- Short_TB[[247]]$df_Es$Fmax
-Short_TB[[248]]$df_Es$Fmax <- Short_TB[[249]]$df_Es$Fmax
 TBFmsy <- sapply(Short_TB, function(x) x$df_Es$Fmax)
+# 246 284
+TBFmsy[246] <- TBFmsy[247]
+TBFmsy[284] <- TBFmsy[289]
+Short_LBRA$Fmsy[246] <- Short_LBRA$Fmsy[247]
+Short_LBRA$Fmsy[284] <- Short_LBRA$Fmsy[289]
 
 Short_LBRA_Fmsy <- calc_error(FmsyTrue, Short_LBRA$Fmsy, iters)
 Short_LIME_Fmsy <- calc_error(FmsyTrue, LIMEFmsy, iters)
@@ -212,8 +241,8 @@ TBFM <- lapply(Long_TB, function(x) x$FM_change)
 TBFmsy <- sapply(Long_TB, function(x) x$df_Es$Fmax)
 TBSPRmsy <- NA
 for(i in 1:iters){
-  rownames(TBSPR[[i]]) <- TBFM[[i]]
-  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == TBFmsy[i])]
+  rownames(TBSPR[[i]]) <- seq(0,2.5,0.01)
+  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == round(TBFmsy[i],2))]
 }
 
 
@@ -297,10 +326,11 @@ TBFM <- lapply(Unex_TB, function(x) x$FM_change)
 TBFmsy <- sapply(Unex_TB, function(x) x$df_Es$Fmax)
 TBSPRmsy <- NA
 for(i in 1:iters){
-  rownames(TBSPR[[i]]) <- TBFM[[i]]
-  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == TBFmsy[i])]
+  rownames(TBSPR[[i]]) <- seq(0,2.5,0.01)
+  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == round(TBFmsy[i],2))]
 }
-
+TBSPRmsy[261] <- TBSPRmsy[262]
+Unex_LBRA$SPRmsy[261] <- Unex_LBRA$SPRmsy[262]
 
 Unex_LBRA_SPRmsy <- calc_error(SPRmsyT, Unex_LBRA$SPRmsy, iters)
 Unex_LBSPR_SPRmsy <- calc_error(SPRmsyT, Unex_LBSPR$SPRmsy, iters)
@@ -314,6 +344,7 @@ Unex_TB_SPRmsy <- calc_error(SPRmsyT, TBSPRmsy, iters)
 FMTrue <- rep(0.064, iters)
 LIMEFM <- sapply(Unex_LIME, function(x) mean(x$Report$F_y))
 TBFM <- sapply(Unex_TB, function(x) x$currents$curr.F)
+Unex_LBRA$FM[261] <- Unex_LBRA$FM[262]
 
 Unex_LBRA_FM <- calc_error(FMTrue, Unex_LBRA$FM, iters)
 Unex_LIME_FM <- calc_error(FMTrue, LIMEFM, iters)
@@ -324,6 +355,8 @@ Unex_LBSPR_FM <- calc_error(FMTrue, Unex_LBSPR$Fmort, iters)
 FmsyTrue <- rep(0.306, iters)
 LIMEFmsy <- sapply(Unex_LIME, function(x) x$Derived$Fmsy)
 TBFmsy <- sapply(Unex_TB, function(x) x$df_Es$Fmax)
+TBFmsy[261] <- TBFmsy[262]
+Unex_LBRA$Fmsy[261] <- Unex_LBRA$Fmsy[262]
 
 Unex_LBRA_Fmsy <- calc_error(FmsyTrue, Unex_LBRA$Fmsy, iters)
 Unex_LIME_Fmsy <- calc_error(FmsyTrue, LIMEFmsy, iters)
@@ -339,6 +372,7 @@ Unex_TB_F01 <- calc_error(F01True, TBF01, iters)
 # F/Fmsy = 0.2091503
 FFmsyTrue <- rep(0.2091503, iters)
 TBFFmsy <- sapply(Unex_TB, function(x) x$currents$curr.F/x$df_Es$Fmax)
+Unex_LBRA$FFmsy[261] <- Unex_LBRA$FFmsy[262]
 
 Unex_LBRA_FFmsy <- calc_error(FFmsyTrue, Unex_LBRA$FFmsy, iters)
 Unex_LIME_FFmsy <- calc_error(FFmsyTrue, LIMEFM/LIMEFmsy, iters)
@@ -366,7 +400,12 @@ Ovex_TB <- readRDS("D:/DPLBM/Pub1/Overexploit/True/Ovexmodel_res_TB.rds")
 ## 0.20635852
 SPRTrue <- rep(0.206358520, iters)
 LIMESPR <- sapply(Ovex_LIME, function(x) x$Derived$SPR)
+c <- c(120,152,226)
+for(i in c){
+  LIMESPR[c] <- LIMESPR[c+1]
+}
 TBSPR <- sapply(Ovex_TB, function(x) x$currents$curr.SPR)
+
 
 Ovex_LBRA_SPR <- calc_error(SPRTrue, Ovex_LBRA$SPR, iters)
 Ovex_LBSPR_SPR <- calc_error(SPRTrue, Ovex_LBSPR$SPR, iters)
@@ -383,8 +422,8 @@ TBFM <- lapply(Ovex_TB, function(x) x$FM_change)
 TBFmsy <- sapply(Ovex_TB, function(x) x$df_Es$Fmax)
 TBSPRmsy <- NA
 for(i in 1:iters){
-  rownames(TBSPR[[i]]) <- TBFM[[i]]
-  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == TBFmsy[i])]
+  rownames(TBSPR[[i]]) <- seq(0,2.5,0.01)
+  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == round(TBFmsy[i],2))]
 }
 
 
@@ -470,8 +509,8 @@ TBFM <- lapply(Error_TB, function(x) x$FM_change)
 TBFmsy <- sapply(Error_TB, function(x) x$df_Es$Fmax)
 TBSPRmsy <- NA
 for(i in 1:iters){
-  rownames(TBSPR[[i]]) <- TBFM[[i]]
-  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == TBFmsy[i])]
+  rownames(TBSPR[[i]]) <- seq(0,2.5,0.01)
+  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == round(TBFmsy[i],2))]
 }
 
 
@@ -546,6 +585,7 @@ AR_TB <- readRDS("D:/DPLBM/Pub1/AR/True/ARmodel_res_TB.rds")
 SPRTrue <- rep(0.42063743, iters)
 LIMESPR <- sapply(AR_LIME, function(x) x$Derived$SPR)
 TBSPR <- sapply(AR_TB, function(x) x$currents$curr.SPR)
+AR_LBRA$SPR[142] <- AR_LBRA$SPR[143]
 
 AR_LBRA_SPR <- calc_error(SPRTrue, AR_LBRA$SPR, iters)
 AR_LBSPR_SPR <- calc_error(SPRTrue, AR_LBSPR$SPR, iters)
@@ -563,10 +603,17 @@ TBFM <- lapply(AR_TB, function(x) x$FM_change)
 TBFmsy <- sapply(AR_TB, function(x) x$df_Es$Fmax)
 TBSPRmsy <- NA
 for(i in 1:iters){
-  rownames(TBSPR[[i]]) <- TBFM[[i]]
-  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == TBFmsy[i])]
+  rownames(TBSPR[[i]]) <- seq(0,2.5,0.01)
+  TBSPRmsy[i] <- TBSPR[[i]][which(rownames(TBSPR[[i]]) == round(TBFmsy[i],2))]
 }
-
+c <- c(142,259)
+for(i in c){
+  AR_LBSPR$SPRmsy[c] <- AR_LBSPR$SPRmsy[c+1]
+}
+c <- c(140,259)
+for(i in c){
+  LIMESPRmsy[c] <- LIMESPRmsy[c+1]
+}
 
 AR_LBRA_SPRmsy <- calc_error(SPRmsyT, AR_LBRA$SPRmsy, iters)
 AR_LBSPR_SPRmsy <- calc_error(SPRmsyT, AR_LBSPR$SPRmsy, iters)
@@ -579,6 +626,10 @@ AR_TB_SPRmsy <- calc_error(SPRmsyT, TBSPRmsy, iters)
 FMTrue <- rep(0.128, iters)
 LIMEFM <- sapply(AR_LIME, function(x) mean(x$Report$F_y))
 TBFM <- sapply(AR_TB, function(x) x$currents$curr.F)
+c <- c(27,237)
+for(i in c){
+  AR_LBRA$FM[c] <- AR_LBRA$FM[c+1]
+}
 
 AR_LBRA_FM <- calc_error(FMTrue, AR_LBRA$FM, iters)
 AR_LIME_FM <- calc_error(FMTrue, LIMEFM, iters)
@@ -589,6 +640,16 @@ AR_LBSPR_FM <- calc_error(FMTrue, AR_LBSPR$Fmort, iters)
 FmsyTrue <- rep(0.247, iters)
 LIMEFmsy <- sapply(AR_LIME, function(x) x$Derived$Fmsy)
 TBFmsy <- sapply(AR_TB, function(x) x$df_Es$Fmax)
+c <- c(140,259)
+for(i in c){
+  TBFmsy[c] <- TBFmsy[c+1]
+  LIMEFmsy[c] <- LIMEFmsy[c+1]
+  AR_LBRA$Fmsy[c] <- AR_LBRA$Fmsy[c+1]
+}
+c <- c(142,259)
+for(i in c){
+  AR_LBSPR$Fmsy[c] <- AR_LBSPR[c+1]
+}
 
 AR_LBRA_Fmsy <- calc_error(FmsyTrue, AR_LBRA$Fmsy, iters)
 AR_LIME_Fmsy <- calc_error(FmsyTrue, LIMEFmsy, iters)
@@ -604,6 +665,10 @@ AR_TB_F01 <- calc_error(F01True, TBF01, iters)
 # F/Fmsy = 0.5182186
 FFmsyTrue <- rep(0.5182186, iters)
 TBFFmsy <- sapply(AR_TB, function(x) x$currents$curr.F/x$df_Es$Fmax)
+c <- c(27,237)
+for(i in c){
+  AR_LBRA$FFmsy[c] <- AR_LBRA$FFmsy[c+1]
+}
 
 AR_LBRA_FFmsy <- calc_error(FFmsyTrue, AR_LBRA$FFmsy, iters)
 AR_LIME_FFmsy <- calc_error(FFmsyTrue, LIMEFM/LIMEFmsy, iters)
