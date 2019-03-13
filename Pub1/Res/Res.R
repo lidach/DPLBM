@@ -648,7 +648,7 @@ for(i in c){
 }
 c <- c(142,259)
 for(i in c){
-  AR_LBSPR$Fmsy[c] <- AR_LBSPR[c+1]
+  AR_LBSPR$Fmsy[c] <- AR_LBSPR$Fmsy[c+1]
 }
 
 AR_LBRA_Fmsy <- calc_error(FmsyTrue, AR_LBRA$Fmsy, iters)
@@ -696,10 +696,10 @@ AR_TB_FF01 <- calc_error(FF01True, TBFF01, iters)
 LH_SPR <- data.frame(c(Med_TB_SPR$rel_error, Med_LBSPR_SPR$rel_error, Med_LIME_SPR$rel_error, Med_LBRA_SPR$rel_error, 
                        Short_TB_SPR$rel_error, Short_LBSPR_SPR$rel_error, Short_LIME_SPR$rel_error, Short_LBRA_SPR$rel_error,
                        Long_TB_SPR$rel_error, Long_LBSPR_SPR$rel_error, Long_LIME_SPR$rel_error, Long_LBRA_SPR$rel_error),
-                       c(rep("Med", 1200), rep("Short", 1200), rep("Long",1200)),
+                       c(rep("Med", 1200), rep("Short", 1200), rep("Longer",1200)),
                        c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(LH_SPR) <- c("Relative_error", "Scenario", "Method")
-LH_SPR$Scenario <- factor(LH_SPR$Scenario, levels = c("Short", "Med", "Long"))
+LH_SPR$Scenario <- factor(LH_SPR$Scenario, levels = c("Short", "Med", "Longer"))
 LH_SPR$Method <- factor(LH_SPR$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(LH_SPR, file = "files/LH_SPR.rds")
 
@@ -709,10 +709,10 @@ saveRDS(LH_SPR, file = "files/LH_SPR.rds")
 LH_SPRmsy <- data.frame(c(Med_TB_SPRmsy$rel_error, Med_LBSPR_SPRmsy$rel_error, Med_LIME_SPRmsy$rel_error, Med_LBRA_SPRmsy$rel_error, 
                          Short_TB_SPRmsy$rel_error, Short_LBSPR_SPRmsy$rel_error, Short_LIME_SPRmsy$rel_error, Short_LBRA_SPRmsy$rel_error,
                          Long_TB_SPRmsy$rel_error, Long_LBSPR_SPRmsy$rel_error, Long_LIME_SPRmsy$rel_error, Long_LBRA_SPRmsy$rel_error),
-                       c(rep("Med", 1200), rep("Short", 1200), rep("Long",1200)),
+                       c(rep("Med", 1200), rep("Short", 1200), rep("Longer",1200)),
                        c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(LH_SPRmsy) <- c("Relative_error", "Scenario", "Method")
-LH_SPRmsy$Scenario <- factor(LH_SPRmsy$Scenario, levels = c("Short", "Med", "Long"))
+LH_SPRmsy$Scenario <- factor(LH_SPRmsy$Scenario, levels = c("Short", "Med", "Longer"))
 LH_SPRmsy$Method <- factor(LH_SPRmsy$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(LH_SPRmsy, file = "files/LH_SPRmsy.rds")
 
@@ -722,10 +722,10 @@ saveRDS(LH_SPRmsy, file = "files/LH_SPRmsy.rds")
 LH_FFmsy <- data.frame(c(Med_TB_FFmsy$rel_error, Med_LBSPR_FFmsy$rel_error, Med_LIME_FFmsy$rel_error, Med_LBRA_FFmsy$rel_error, 
                        Short_TB_FFmsy$rel_error, Short_LBSPR_FFmsy$rel_error, Short_LIME_FFmsy$rel_error, Short_LBRA_FFmsy$rel_error,
                        Long_TB_FFmsy$rel_error, Long_LBSPR_FFmsy$rel_error, Long_LIME_FFmsy$rel_error, Long_LBRA_FFmsy$rel_error),
-                     c(rep("Med", 1200), rep("Short", 1200), rep("Long",1200)),
+                     c(rep("Med", 1200), rep("Short", 1200), rep("Longer",1200)),
                      c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(LH_FFmsy) <- c("Relative_error", "Scenario", "Method")
-LH_FFmsy$Scenario <- factor(LH_FFmsy$Scenario, levels = c("Short", "Med", "Long"))
+LH_FFmsy$Scenario <- factor(LH_FFmsy$Scenario, levels = c("Short", "Med", "Longer"))
 LH_FFmsy$Method <- factor(LH_FFmsy$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(LH_FFmsy, file = "files/LH_FFmsy.rds")
 
@@ -735,10 +735,10 @@ saveRDS(LH_FFmsy, file = "files/LH_FFmsy.rds")
 LH_FM <- data.frame(c(Med_TB_FM$rel_error, Med_LBSPR_FM$rel_error, Med_LIME_FM$rel_error, Med_LBRA_FM$rel_error, 
                          Short_TB_FM$rel_error, Short_LBSPR_FM$rel_error, Short_LIME_FM$rel_error, Short_LBRA_FM$rel_error,
                          Long_TB_FM$rel_error, Long_LBSPR_FM$rel_error, Long_LIME_FM$rel_error, Long_LBRA_FM$rel_error),
-                       c(rep("Med", 1200), rep("Short", 1200), rep("Long",1200)),
+                       c(rep("Med", 1200), rep("Short", 1200), rep("Longer",1200)),
                        c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(LH_FM) <- c("Relative_error", "Scenario", "Method")
-LH_FM$Scenario <- factor(LH_FM$Scenario, levels = c("Short", "Med", "Long"))
+LH_FM$Scenario <- factor(LH_FM$Scenario, levels = c("Short", "Med", "Longer"))
 LH_FM$Method <- factor(LH_FM$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(LH_FM, file = "files/LH_FM.rds")
 
@@ -748,10 +748,10 @@ saveRDS(LH_FM, file = "files/LH_FM.rds")
 LH_Fmsy <- data.frame(c(Med_TB_Fmsy$rel_error, Med_LBSPR_Fmsy$rel_error, Med_LIME_Fmsy$rel_error, Med_LBRA_Fmsy$rel_error, 
                       Short_TB_Fmsy$rel_error, Short_LBSPR_Fmsy$rel_error, Short_LIME_Fmsy$rel_error, Short_LBRA_Fmsy$rel_error,
                       Long_TB_Fmsy$rel_error, Long_LBSPR_Fmsy$rel_error, Long_LIME_Fmsy$rel_error, Long_LBRA_Fmsy$rel_error),
-                    c(rep("Med", 1200), rep("Short", 1200), rep("Long",1200)),
+                    c(rep("Med", 1200), rep("Short", 1200), rep("Longer",1200)),
                     c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(LH_Fmsy) <- c("Relative_error", "Scenario", "Method")
-LH_Fmsy$Scenario <- factor(LH_Fmsy$Scenario, levels = c("Short", "Med", "Long"))
+LH_Fmsy$Scenario <- factor(LH_Fmsy$Scenario, levels = c("Short", "Med", "Longer"))
 LH_Fmsy$Method <- factor(LH_Fmsy$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(LH_Fmsy, file = "files/LH_Fmsy.rds")
 
@@ -765,10 +765,10 @@ saveRDS(LH_Fmsy, file = "files/LH_Fmsy.rds")
 Exp_SPR <- data.frame(c(Med_TB_SPR$rel_error, Med_LBSPR_SPR$rel_error, Med_LIME_SPR$rel_error, Med_LBRA_SPR$rel_error, 
                        Unex_TB_SPR$rel_error, Unex_LBSPR_SPR$rel_error, Unex_LIME_SPR$rel_error, Unex_LBRA_SPR$rel_error,
                        Ovex_TB_SPR$rel_error, Ovex_LBSPR_SPR$rel_error, Ovex_LIME_SPR$rel_error, Ovex_LBRA_SPR$rel_error),
-                     c(rep("Target", 1200), rep("Unex", 1200), rep("Ovex",1200)),
+                     c(rep("Target", 1200), rep("Underexploited", 1200), rep("Overexploited",1200)),
                      c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(Exp_SPR) <- c("Relative_error", "Scenario", "Method")
-Exp_SPR$Scenario <- factor(Exp_SPR$Scenario, levels = c("Target", "Unex", "Ovex"))
+Exp_SPR$Scenario <- factor(Exp_SPR$Scenario, levels = c("Target", "Underexploited", "Overexploited"))
 Exp_SPR$Method <- factor(Exp_SPR$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(Exp_SPR, file = "files/Exp_SPR.rds")
 
@@ -778,10 +778,10 @@ saveRDS(Exp_SPR, file = "files/Exp_SPR.rds")
 Exp_SPRmsy <- data.frame(c(Med_TB_SPRmsy$rel_error, Med_LBSPR_SPRmsy$rel_error, Med_LIME_SPRmsy$rel_error, Med_LBRA_SPRmsy$rel_error, 
                           Unex_TB_SPRmsy$rel_error, Unex_LBSPR_SPRmsy$rel_error, Unex_LIME_SPRmsy$rel_error, Unex_LBRA_SPRmsy$rel_error,
                           Ovex_TB_SPRmsy$rel_error, Ovex_LBSPR_SPRmsy$rel_error, Ovex_LIME_SPRmsy$rel_error, Ovex_LBRA_SPRmsy$rel_error),
-                        c(rep("Target", 1200), rep("Unex", 1200), rep("Ovex",1200)),
+                        c(rep("Target", 1200), rep("Underexploited", 1200), rep("Overexploited",1200)),
                         c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(Exp_SPRmsy) <- c("Relative_error", "Scenario", "Method")
-Exp_SPRmsy$Scenario <- factor(Exp_SPRmsy$Scenario, levels = c("Target", "Unex", "Ovex"))
+Exp_SPRmsy$Scenario <- factor(Exp_SPRmsy$Scenario, levels = c("Target", "Underexploited", "Overexploited"))
 Exp_SPRmsy$Method <- factor(Exp_SPRmsy$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(Exp_SPRmsy, file = "files/Exp_SPRmsy.rds")
 
@@ -791,10 +791,10 @@ saveRDS(Exp_SPRmsy, file = "files/Exp_SPRmsy.rds")
 Exp_FFmsy <- data.frame(c(Med_TB_FFmsy$rel_error, Med_LBSPR_FFmsy$rel_error, Med_LIME_FFmsy$rel_error, Med_LBRA_FFmsy$rel_error, 
                          Unex_TB_FFmsy$rel_error, Unex_LBSPR_FFmsy$rel_error, Unex_LIME_FFmsy$rel_error, Unex_LBRA_FFmsy$rel_error,
                          Ovex_TB_FFmsy$rel_error, Ovex_LBSPR_FFmsy$rel_error, Ovex_LIME_FFmsy$rel_error, Ovex_LBRA_FFmsy$rel_error),
-                       c(rep("Target", 1200), rep("Unex", 1200), rep("Ovex",1200)),
+                       c(rep("Target", 1200), rep("Underexploited", 1200), rep("Overexploited",1200)),
                        c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(Exp_FFmsy) <- c("Relative_error", "Scenario", "Method")
-Exp_FFmsy$Scenario <- factor(Exp_FFmsy$Scenario, levels = c("Target", "Unex", "Ovex"))
+Exp_FFmsy$Scenario <- factor(Exp_FFmsy$Scenario, levels = c("Target", "Underexploited", "Overexploited"))
 Exp_FFmsy$Method <- factor(Exp_FFmsy$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(Exp_FFmsy, file = "files/Exp_FFmsy.rds")
 
@@ -804,10 +804,10 @@ saveRDS(Exp_FFmsy, file = "files/Exp_FFmsy.rds")
 Exp_FM <- data.frame(c(Med_TB_FM$rel_error, Med_LBSPR_FM$rel_error, Med_LIME_FM$rel_error, Med_LBRA_FM$rel_error, 
                       Unex_TB_FM$rel_error, Unex_LBSPR_FM$rel_error, Unex_LIME_FM$rel_error, Unex_LBRA_FM$rel_error,
                       Ovex_TB_FM$rel_error, Ovex_LBSPR_FM$rel_error, Ovex_LIME_FM$rel_error, Ovex_LBRA_FM$rel_error),
-                    c(rep("Target", 1200), rep("Unex", 1200), rep("Ovex",1200)),
+                    c(rep("Target", 1200), rep("Underexploited", 1200), rep("Overexploited",1200)),
                     c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(Exp_FM) <- c("Relative_error", "Scenario", "Method")
-Exp_FM$Scenario <- factor(Exp_FM$Scenario, levels = c("Target", "Unex", "Ovex"))
+Exp_FM$Scenario <- factor(Exp_FM$Scenario, levels = c("Target", "Underexploited", "Overexploited"))
 Exp_FM$Method <- factor(Exp_FM$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(Exp_FM, file = "files/Exp_FM.rds")
 
@@ -817,10 +817,10 @@ saveRDS(Exp_FM, file = "files/Exp_FM.rds")
 Exp_Fmsy <- data.frame(c(Med_TB_Fmsy$rel_error, Med_LBSPR_Fmsy$rel_error, Med_LIME_Fmsy$rel_error, Med_LBRA_Fmsy$rel_error, 
                         Unex_TB_Fmsy$rel_error, Unex_LBSPR_Fmsy$rel_error, Unex_LIME_Fmsy$rel_error, Unex_LBRA_Fmsy$rel_error,
                         Ovex_TB_Fmsy$rel_error, Ovex_LBSPR_Fmsy$rel_error, Ovex_LIME_Fmsy$rel_error, Ovex_LBRA_Fmsy$rel_error),
-                      c(rep("Target", 1200), rep("Unex", 1200), rep("Ovex",1200)),
+                      c(rep("Target", 1200), rep("Underexploited", 1200), rep("Overexploited",1200)),
                       c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(Exp_Fmsy) <- c("Relative_error", "Scenario", "Method")
-Exp_Fmsy$Scenario <- factor(Exp_Fmsy$Scenario, levels = c("Target", "Unex", "Ovex"))
+Exp_Fmsy$Scenario <- factor(Exp_Fmsy$Scenario, levels = c("Target", "Underexploited", "Overexploited"))
 Exp_Fmsy$Method <- factor(Exp_Fmsy$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(Exp_Fmsy, file = "files/Exp_Fmsy.rds")
 
@@ -833,10 +833,10 @@ saveRDS(Exp_Fmsy, file = "files/Exp_Fmsy.rds")
 Rec_SPR <- data.frame(c(Med_TB_SPR$rel_error, Med_LBSPR_SPR$rel_error, Med_LIME_SPR$rel_error, Med_LBRA_SPR$rel_error, 
                        Error_TB_SPR$rel_error, Error_LBSPR_SPR$rel_error, Error_LIME_SPR$rel_error, Error_LBRA_SPR$rel_error,
                        AR_TB_SPR$rel_error, AR_LBSPR_SPR$rel_error, AR_LIME_SPR$rel_error, AR_LBRA_SPR$rel_error),
-                     c(rep("None", 1200), rep("Error", 1200), rep("AR",1200)),
+                     c(rep("No error", 1200), rep("Stochastic", 1200), rep("Autocorrelation",1200)),
                      c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(Rec_SPR) <- c("Relative_error", "Scenario", "Method")
-Rec_SPR$Scenario <- factor(Rec_SPR$Scenario, levels = c("None", "Error", "AR"))
+Rec_SPR$Scenario <- factor(Rec_SPR$Scenario, levels = c("No error", "Stochastic", "Autocorrelation"))
 Rec_SPR$Method <- factor(Rec_SPR$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(Rec_SPR, file = "files/Rec_SPR.rds")
 
@@ -846,10 +846,10 @@ saveRDS(Rec_SPR, file = "files/Rec_SPR.rds")
 Rec_SPRmsy <- data.frame(c(Med_TB_SPRmsy$rel_error, Med_LBSPR_SPRmsy$rel_error, Med_LIME_SPRmsy$rel_error, Med_LBRA_SPRmsy$rel_error, 
                           Error_TB_SPRmsy$rel_error, Error_LBSPR_SPRmsy$rel_error, Error_LIME_SPRmsy$rel_error, Error_LBRA_SPRmsy$rel_error,
                           AR_TB_SPRmsy$rel_error, AR_LBSPR_SPRmsy$rel_error, AR_LIME_SPRmsy$rel_error, AR_LBRA_SPRmsy$rel_error),
-                        c(rep("None", 1200), rep("Error", 1200), rep("AR",1200)),
+                        c(rep("No error", 1200), rep("Stochastic", 1200), rep("Autocorrelation",1200)),
                         c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(Rec_SPRmsy) <- c("Relative_error", "Scenario", "Method")
-Rec_SPRmsy$Scenario <- factor(Rec_SPRmsy$Scenario, levels = c("None", "Error", "AR"))
+Rec_SPRmsy$Scenario <- factor(Rec_SPRmsy$Scenario, levels = c("No error", "Stochastic", "Autocorrelation"))
 Rec_SPRmsy$Method <- factor(Rec_SPRmsy$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(Rec_SPRmsy, file = "files/Rec_SPRmsy.rds")
 
@@ -859,10 +859,10 @@ saveRDS(Rec_SPRmsy, file = "files/Rec_SPRmsy.rds")
 Rec_FFmsy <- data.frame(c(Med_TB_FFmsy$rel_error, Med_LBSPR_FFmsy$rel_error, Med_LIME_FFmsy$rel_error, Med_LBRA_FFmsy$rel_error, 
                          Error_TB_FFmsy$rel_error, Error_LBSPR_FFmsy$rel_error, Error_LIME_FFmsy$rel_error, Error_LBRA_FFmsy$rel_error,
                          AR_TB_FFmsy$rel_error, AR_LBSPR_FFmsy$rel_error, AR_LIME_FFmsy$rel_error, AR_LBRA_FFmsy$rel_error),
-                       c(rep("None", 1200), rep("Error", 1200), rep("AR",1200)),
+                       c(rep("No error", 1200), rep("Stochastic", 1200), rep("Autocorrelation",1200)),
                        c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(Rec_FFmsy) <- c("Relative_error", "Scenario", "Method")
-Rec_FFmsy$Scenario <- factor(Rec_FFmsy$Scenario, levels = c("None", "Error", "AR"))
+Rec_FFmsy$Scenario <- factor(Rec_FFmsy$Scenario, levels = c("No error", "Stochastic", "Autocorrelation"))
 Rec_FFmsy$Method <- factor(Rec_FFmsy$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(Rec_FFmsy, file = "files/Rec_FFmsy.rds")
 
@@ -872,10 +872,10 @@ saveRDS(Rec_FFmsy, file = "files/Rec_FFmsy.rds")
 Rec_FM <- data.frame(c(Med_TB_FM$rel_error, Med_LBSPR_FM$rel_error, Med_LIME_FM$rel_error, Med_LBRA_FM$rel_error, 
                       Error_TB_FM$rel_error, Error_LBSPR_FM$rel_error, Error_LIME_FM$rel_error, Error_LBRA_FM$rel_error,
                       AR_TB_FM$rel_error, AR_LBSPR_FM$rel_error, AR_LIME_FM$rel_error, AR_LBRA_FM$rel_error),
-                    c(rep("None", 1200), rep("Error", 1200), rep("AR",1200)),
+                    c(rep("No error", 1200), rep("Stochastic", 1200), rep("Autocorrelation",1200)),
                     c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(Rec_FM) <- c("Relative_error", "Scenario", "Method")
-Rec_FM$Scenario <- factor(Rec_FM$Scenario, levels = c("None", "Error", "AR"))
+Rec_FM$Scenario <- factor(Rec_FM$Scenario, levels = c("No error", "Stochastic", "Autocorrelation"))
 Rec_FM$Method <- factor(Rec_FM$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(Rec_FM, file = "files/Rec_FM.rds")
 
@@ -885,10 +885,10 @@ saveRDS(Rec_FM, file = "files/Rec_FM.rds")
 Rec_Fmsy <- data.frame(c(Med_TB_Fmsy$rel_error, Med_LBSPR_Fmsy$rel_error, Med_LIME_Fmsy$rel_error, Med_LBRA_Fmsy$rel_error, 
                         Error_TB_Fmsy$rel_error, Error_LBSPR_Fmsy$rel_error, Error_LIME_Fmsy$rel_error, Error_LBRA_Fmsy$rel_error,
                         AR_TB_Fmsy$rel_error, AR_LBSPR_Fmsy$rel_error, AR_LIME_Fmsy$rel_error, AR_LBRA_Fmsy$rel_error),
-                      c(rep("None", 1200), rep("Error", 1200), rep("AR",1200)),
+                      c(rep("No error", 1200), rep("Stochastic", 1200), rep("Autocorrelation",1200)),
                       c(rep(rep(c("TB", "LBSPR", "LIME", "LBRA"), each = 300), 3)))
 colnames(Rec_Fmsy) <- c("Relative_error", "Scenario", "Method")
-Rec_Fmsy$Scenario <- factor(Rec_Fmsy$Scenario, levels = c("None", "Error", "AR"))
+Rec_Fmsy$Scenario <- factor(Rec_Fmsy$Scenario, levels = c("No error", "Stochastic", "Autocorrelation"))
 Rec_Fmsy$Method <- factor(Rec_Fmsy$Method, levels = c("TB", "LBSPR", "LIME", "LBRA"))
 saveRDS(Rec_Fmsy, file = "files/Rec_Fmsy.rds")
 
@@ -906,7 +906,7 @@ LH_SPR.err$LBRA <- cbind(c(Short_LBRA_SPR$MRE, Med_LBRA_SPR$MRE, Long_LBRA_SPR$M
 
 for(i in 1:4){
   colnames(LH_SPR.err[[i]]) <- c("MRE", "MARE")
-  rownames(LH_SPR.err[[i]]) <- c("Short", "Med", "Long")
+  rownames(LH_SPR.err[[i]]) <- c("Short", "Med", "Longer")
 }
 
 saveRDS(LH_SPR.err, file = "files/LH_SPR_err.rds")
@@ -922,7 +922,7 @@ LH_SPRmsy.err$LBRA <- cbind(c(Short_LBRA_SPRmsy$MRE, Med_LBRA_SPRmsy$MRE, Long_L
 
 for(i in 1:4){
   colnames(LH_SPRmsy.err[[i]]) <- c("MRE", "MARE")
-  rownames(LH_SPRmsy.err[[i]]) <- c("Short", "Med", "Long")
+  rownames(LH_SPRmsy.err[[i]]) <- c("Short", "Med", "Longer")
 }
 
 saveRDS(LH_SPRmsy.err, file = "files/LH_SPRmsy_err.rds")
@@ -938,7 +938,7 @@ LH_FFmsy.err$LBRA <- cbind(c(Short_LBRA_FFmsy$MRE, Med_LBRA_FFmsy$MRE, Long_LBRA
 
 for(i in 1:4){
   colnames(LH_FFmsy.err[[i]]) <- c("MRE", "MARE")
-  rownames(LH_FFmsy.err[[i]]) <- c("Short", "Med", "Long")
+  rownames(LH_FFmsy.err[[i]]) <- c("Short", "Med", "Longer")
 }
 
 saveRDS(LH_FFmsy.err, file = "files/LH_FFmsy_err.rds")
@@ -954,7 +954,7 @@ LH_FM.err$LBRA <- cbind(c(Short_LBRA_FM$MRE, Med_LBRA_FM$MRE, Long_LBRA_FM$MRE),
 
 for(i in 1:4){
   colnames(LH_FM.err[[i]]) <- c("MRE", "MARE")
-  rownames(LH_FM.err[[i]]) <- c("Short", "Med", "Long")
+  rownames(LH_FM.err[[i]]) <- c("Short", "Med", "Longer")
 }
 
 saveRDS(LH_FM.err, file = "files/LH_FM_err.rds")
@@ -971,7 +971,7 @@ LH_Fmsy.err$LBRA <- cbind(c(Short_LBRA_Fmsy$MRE, Med_LBRA_Fmsy$MRE, Long_LBRA_Fm
 
 for(i in 1:4){
   colnames(LH_Fmsy.err[[i]]) <- c("MRE", "MARE")
-  rownames(LH_Fmsy.err[[i]]) <- c("Short", "Med", "Long")
+  rownames(LH_Fmsy.err[[i]]) <- c("Short", "Med", "Longer")
 }
 
 saveRDS(LH_Fmsy.err, file = "files/LH_Fmsy_err.rds")
@@ -988,7 +988,7 @@ Exp_SPR.err$LBRA <- cbind(c(Med_LBRA_SPR$MRE, Unex_LBRA_SPR$MRE, Ovex_LBRA_SPR$M
 
 for(i in 1:4){
   colnames(Exp_SPR.err[[i]]) <- c("MRE", "MARE")
-  rownames(Exp_SPR.err[[i]]) <- c("Target", "Unex", "Ovex")
+  rownames(Exp_SPR.err[[i]]) <- c("Target", "Underexploited", "Overexploited")
 }
 
 saveRDS(Exp_SPR.err, file = "files/Exp_SPR_err.rds")
@@ -1004,7 +1004,7 @@ Exp_SPRmsy.err$LBRA <- cbind(c(Med_LBRA_SPRmsy$MRE, Unex_LBRA_SPRmsy$MRE, Ovex_L
 
 for(i in 1:4){
   colnames(Exp_SPRmsy.err[[i]]) <- c("MRE", "MARE")
-  rownames(Exp_SPRmsy.err[[i]]) <- c("Target", "Unex", "Ovex")
+  rownames(Exp_SPRmsy.err[[i]]) <- c("Target", "Underexploited", "Overexploited")
 }
 
 saveRDS(Exp_SPRmsy.err, file = "files/Exp_SPRmsy_err.rds")
@@ -1020,7 +1020,7 @@ Exp_FFmsy.err$LBRA <- cbind(c(Med_LBRA_FFmsy$MRE, Unex_LBRA_FFmsy$MRE, Ovex_LBRA
 
 for(i in 1:4){
   colnames(Exp_FFmsy.err[[i]]) <- c("MRE", "MARE")
-  rownames(Exp_FFmsy.err[[i]]) <- c("Target", "Unex", "Ovex")
+  rownames(Exp_FFmsy.err[[i]]) <- c("Target", "Underexploited", "Overexploited")
 }
 
 saveRDS(Exp_FFmsy.err, file = "files/Exp_FFmsy_err.rds")
@@ -1036,7 +1036,7 @@ Exp_FM.err$LBRA <- cbind(c(Med_LBRA_FM$MRE, Unex_LBRA_FM$MRE, Ovex_LBRA_FM$MRE),
 
 for(i in 1:4){
   colnames(Exp_FM.err[[i]]) <- c("MRE", "MARE")
-  rownames(Exp_FM.err[[i]]) <- c("Target", "Unex", "Ovex")
+  rownames(Exp_FM.err[[i]]) <- c("Target", "Underexploited", "Overexploited")
 }
 
 saveRDS(Exp_FM.err, file = "files/Exp_FM_err.rds")
@@ -1053,7 +1053,7 @@ Exp_Fmsy.err$LBRA <- cbind(c(Med_LBRA_Fmsy$MRE, Unex_LBRA_Fmsy$MRE, Ovex_LBRA_Fm
 
 for(i in 1:4){
   colnames(Exp_Fmsy.err[[i]]) <- c("MRE", "MARE")
-  rownames(Exp_Fmsy.err[[i]]) <- c("Target", "Unex", "Ovex")
+  rownames(Exp_Fmsy.err[[i]]) <- c("Target", "Underexploited", "Overexploited")
 }
 
 saveRDS(Exp_Fmsy.err, file = "files/Exp_Fmsy_err.rds")
@@ -1070,7 +1070,7 @@ Rec_SPR.err$LBRA <- cbind(c(Med_LBRA_SPR$MRE, Error_LBRA_SPR$MRE, AR_LBRA_SPR$MR
 
 for(i in 1:4){
   colnames(Rec_SPR.err[[i]]) <- c("MRE", "MARE")
-  rownames(Rec_SPR.err[[i]]) <- c("None", "Error", "AR")
+  rownames(Rec_SPR.err[[i]]) <- c("No error", "Stochastic", "Autocorrelation")
 }
 
 saveRDS(Rec_SPR.err, file = "files/Rec_SPR_err.rds")
@@ -1086,7 +1086,7 @@ Rec_SPRmsy.err$LBRA <- cbind(c(Med_LBRA_SPRmsy$MRE, Error_LBRA_SPRmsy$MRE, AR_LB
 
 for(i in 1:4){
   colnames(Rec_SPRmsy.err[[i]]) <- c("MRE", "MARE")
-  rownames(Rec_SPRmsy.err[[i]]) <- c("None", "Error", "AR")
+  rownames(Rec_SPRmsy.err[[i]]) <- c("No error", "Stochastic", "Autocorrelation")
 }
 
 saveRDS(Rec_SPRmsy.err, file = "files/Rec_SPRmsy_err.rds")
@@ -1102,7 +1102,7 @@ Rec_FFmsy.err$LBRA <- cbind(c(Med_LBRA_FFmsy$MRE, Error_LBRA_FFmsy$MRE, AR_LBRA_
 
 for(i in 1:4){
   colnames(Rec_FFmsy.err[[i]]) <- c("MRE", "MARE")
-  rownames(Rec_FFmsy.err[[i]]) <- c("None", "Error", "AR")
+  rownames(Rec_FFmsy.err[[i]]) <- c("No error", "Stochastic", "Autocorrelation")
 }
 
 saveRDS(Rec_FFmsy.err, file = "files/Rec_FFmsy_err.rds")
@@ -1118,7 +1118,7 @@ Rec_FM.err$LBRA <- cbind(c(Med_LBRA_FM$MRE, Error_LBRA_FM$MRE, AR_LBRA_FM$MRE), 
 
 for(i in 1:4){
   colnames(Rec_FM.err[[i]]) <- c("MRE", "MARE")
-  rownames(Rec_FM.err[[i]]) <- c("None", "Error", "AR")
+  rownames(Rec_FM.err[[i]]) <- c("No error", "Stochastic", "Autocorrelation")
 }
 
 saveRDS(Rec_FM.err, file = "files/Rec_FM_err.rds")
@@ -1135,7 +1135,7 @@ Rec_Fmsy.err$LBRA <- cbind(c(Med_LBRA_Fmsy$MRE, Error_LBRA_Fmsy$MRE, AR_LBRA_Fms
 
 for(i in 1:4){
   colnames(Rec_Fmsy.err[[i]]) <- c("MRE", "MARE")
-  rownames(Rec_Fmsy.err[[i]]) <- c("None", "Error", "AR")
+  rownames(Rec_Fmsy.err[[i]]) <- c("No error", "Stochastic", "Autocorrelation")
 }
 
 saveRDS(Rec_Fmsy.err, file = "files/Rec_Fmsy_err.rds")
